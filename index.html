@@ -1,1 +1,96 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SEBU DOLLAR AI PRO — Smart Signal</title>
+<script src="https://unpkg.com/lightweight-charts@5.0.0/dist/lightweight-charts.standalone.production.js"></script>
+<style>
+:root{--bg:#05080c;--card:#0b1016;--line:#1c2731;--gold:#f4c84b;--green:#32e875;--cyan:#16d9ee;--red:#ff5252;--text:#edf2f7}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,sans-serif}.wrap{max-width:900px;margin:auto;padding:15px}.card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:15px;margin-bottom:12px}
+.signal-box{border:2px solid var(--line);padding:20px;border-radius:15px;text-align:center}.bull{color:var(--green)}.bear{color:var(--red)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{font-size:12px;color:#8e9aa8;padding:10px;background:#0f161d;border-radius:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div style="font-weight:900;color:var(--gold)">$EBU DOLLAR PRO AI</div>
+    <input id="key" placeholder="API Key Twelve Data" style="width:100%;padding:10px;margin:10px 0;background:#0c1218;border:1px solid #28343f;color:white;border-radius:8px">
+    <button onclick="analyze()" style="width:100%;padding:10px;background:#16d9ee;border:none;border-radius:8px;font-weight:800">START ANALYSIS</button>
+  </div>
 
+  <div class="card signal-box" id="mainSignal">
+    <div style="font-size:12px;color:#8e9aa8">CURRENT SIGNAL</div>
+    <div id="dir" style="font-size:32px;font-weight:900">WAITING</div>
+    <div id="conf" style="font-size:14px;color:var(--gold)">Ready to scan...</div>
+  </div>
+
+  <div class="grid">
+    <div class="metric">SNR ZONE: <b id="snrZone">-</b></div>
+    <div class="metric">H1 CONFIRM: <b id="h1Conf">-</b></div>
+  </div>
+  <div id="chart" style="height:300px;margin-top:15px;border-radius:15px"></div>
+</div>
+
+<script>
+let chart, series;
+const $=id=>document.getElementById(id);
+
+async function analyze(){
+  const key = $('key').value.trim();
+  if(!key) return alert('Input API Key');
+  
+  const m5 = await fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=5min&outputsize=50&apikey=${key}`).then(r=>r.json());
+  const h1 = await fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=1h&outputsize=20&apikey=${key}`).then(r=>r.json());
+  
+  const data = m5.values.reverse();
+  const h1Data = h1.values.reverse();
+  
+  // 1. Deteksi SNR (Simple Pivot)
+  let lastClose = +data.at(-1).close;
+  let resistance = Math.max(...data.slice(-20).map(d=>+d.high));
+  let support = Math.min(...data.slice(-20).map(d=>+d.low));
+  
+  // 2. Deteksi Engulfing
+  const isBullEng = (p, c) => +c.close > +p.open && +c.open < +p.close && +c.close > +p.high;
+  const isBearEng = (p, c) => +c.close < +p.open && +c.open > +p.close && +c.close < +p.low;
+  
+  let bullEngulfing = isBullEng(data.at(-2), data.at(-1));
+  let bearEngulfing = isBearEng(data.at(-2), data.at(-1));
+  
+  // 3. Deteksi H1 Confirmation
+  let h1Bull = isBullEng(h1Data.at(-2), h1Data.at(-1));
+  let h1Bear = isBearEng(h1Data.at(-2), h1Data.at(-1));
+  
+  // 4. Logika Pullback & Signal
+  let signal = "NO SIGNAL";
+  let confidence = 0;
+  
+  // Kondisi: Jika Engulfing + Dekat Zona SNR + Pullback (harga tidak jauh dari area candle engulfing)
+  if(bullEngulfing && lastClose <= (support * 1.002)){
+    signal = "BUY";
+    confidence = h1Bull ? 95 : 60;
+  } else if(bearEngulfing && lastClose >= (resistance * 0.998)){
+    signal = "SELL";
+    confidence = h1Bear ? 95 : 60;
+  }
+  
+  $('dir').textContent = signal;
+  $('dir').className = signal === 'BUY' ? 'bull' : signal === 'SELL' ? 'bear' : '';
+  $('conf').textContent = signal !== 'NO SIGNAL' ? `Confidence: ${confidence}%` : "Scanning...";
+  $('snrZone').textContent = signal === 'BUY' ? "SUPPORT" : signal === 'SELL' ? "RESISTANCE" : "-";
+  $('h1Conf').textContent = (h1Bull || h1Bear) ? "DETECTED" : "NONE";
+  
+  renderChart(data);
+}
+
+function renderChart(data){
+  if(!chart){
+    chart=LightweightCharts.createChart($('chart'),{layout:{background:{color:'#0b1016'},textColor:'#aeb8c2'},grid:{vertLines:{visible:false},horzLines:{visible:false}}});
+    series=chart.addSeries(LightweightCharts.CandlestickSeries);
+  }
+  series.setData(data.map(d=>({time:Math.floor(new Date(d.datetime).getTime()/1000),open:+d.open,high:+d.high,low:+d.low,close:+d.close})));
+}
+</script>
+</body>
+</html>
