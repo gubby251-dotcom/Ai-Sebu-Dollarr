@@ -175,7 +175,7 @@ function runAnalysis(H,M){
   let eng=bullEng||bearEng, entryDir=bullEng?'BUY':bearEng?'SELL':'WAITING';
   let swingLow=Math.min(...M.slice(-30).map(x=>x.low)),swingHigh=Math.max(...M.slice(-30).map(x=>x.high));
   let zoneLow=bullEng?Math.min(prev.low,last.low):Math.max(prev.low,last.low);
-  let zoneHigh=bullEng?Math.max(prev.low,last.low):Min(prev.high,last.high);
+  let zoneHigh=bullEng?Math.max(prev.low,last.low):Math.min(prev.high,last.high);
   let nearZone=bullEng?last.close>=zoneLow&&last.close<=zoneHigh+A*1.2:last.close<=zoneHigh&&last.close>=zoneLow-A*1.2;
   let support=swingLow,resist=swingHigh;
   let snrOk=trendUp?last.close>support+A*.5:last.close<resist-A*.5;
@@ -191,7 +191,6 @@ function runAnalysis(H,M){
   $('checks').innerHTML=setCheck('TREND H1',true,`EMA50 ${fmt(e50)} vs EMA200 ${fmt(e200)} → ${trend}`)+setCheck('ENGULFING M5',eng,eng?(bullEng?'Bullish engulfing':'Bearish engulfing'):'Belum ada engulfing valid')+setCheck('PULLBACK ZONE',nearZone,nearZone?'Harga dekat zone candle konfirmasi':'Harga belum masuk pullback zone')+setCheck('SNR / SND',snrOk,trendUp?'Support/SNR mendukung bias bullish':'Resistance/SNR mendukung bias bearish')+setCheck('PRICE ACTION',priceAction,priceAction?'Break/close mendukung arah':'Belum ada close konfirmasi')+setCheck('FINAL SIGNAL',direction!=='NO SIGNAL',direction==='NO SIGNAL'?'Konfirmasi inti belum lengkap':'Semua konfirmasi inti terpenuhi');
 }
 
-// Inisialisasi awal
 const savedKey = localStorage.getItem('sebu_twelve_key');
 if(savedKey) $('key').value = savedKey;
 
