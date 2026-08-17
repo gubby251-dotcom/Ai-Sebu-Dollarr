@@ -1,1 +1,91 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SEBU DOLLAR AI — XAUUSD Signal</title>
+<script src="https://unpkg.com/lightweight-charts@5.0.0/dist/lightweight-charts.standalone.production.js"></script>
+<style>
+:root{--bg:#05080c;--card:#0b1016;--line:#1c2731;--gold:#f4c84b;--green:#32e875;--cyan:#16d9ee;--red:#ff5252;--text:#edf2f7;--muted:#8e9aa8}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% 0,#13212a 0,#05080c 38%);color:var(--text);font-family:Inter,Arial,sans-serif}
+.wrap{max-width:1100px;margin:auto;padding:18px}.top{display:flex;justify-content:space-between;align-items:center}.premium{color:var(--gold);font-weight:800}.ready{background:#082316;border:1px solid #176f43;color:#45f08a;padding:9px 14px;border-radius:22px;font-size:13px}
+.hero{text-align:center;padding:18px 0 22px}.logo{font-size:58px;font-weight:900;letter-spacing:-4px;background:linear-gradient(90deg,#f3c548,#8cc6ef,#eee);-webkit-background-clip:text;color:transparent}.sub{color:#87a4c1;font-size:18px;letter-spacing:2px}.tag{display:inline-block;margin-top:12px;border:1px solid #bd9a36;color:#e8c65a;border-radius:18px;padding:8px 18px;font-weight:700}
+.card{background:linear-gradient(145deg,#0d131a,#080d12);border:1px solid var(--line);border-radius:18px;padding:20px;margin:16px 0;box-shadow:0 12px 35px #0008}.title{font-size:21px;font-weight:800;color:var(--cyan);margin-bottom:16px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.input{width:100%;border:1px solid #28343f;background:#0c1218;color:#fff;border-radius:11px;padding:14px;font-size:15px}button{width:100%;cursor:pointer;font-weight:900;padding:14px;border-radius:11px;background:linear-gradient(90deg,#25d63d,#0dbce8);border:0;font-size:17px;color:white}.metric{border:1px solid #1e2a34;border-radius:12px;padding:16px;text-align:center}.metric .k{font-size:12px;color:#9aa6b2}.metric .v{font-size:23px;font-weight:900;margin-top:13px}.bull{color:var(--green)}.sell{color:var(--red)}.setup{display:grid;grid-template-columns:1fr 2fr;gap:12px}.direction{display:flex;flex-direction:column;justify-content:center;align-items:center;border:1px solid #20302c;border-radius:14px;min-height:210px}.direction b{font-size:36px}.chart{height:360px;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top"><div class="premium">♛ PREMIUM AI</div><div class="ready">● SYSTEM READY</div></div>
+<div class="hero"><div class="logo">$EBU DOLLAR</div><div class="sub">TRADE & EDUCATION</div><div class="tag">✦ AI SMART ANALYSIS DASHBOARD</div></div>
 
+<div class="card">
+<div class="title">CONNECT API</div>
+<input class="input" id="key" placeholder="Masukkan API Key Twelve Data">
+<button onclick="analyze()" style="margin-top:10px">ANALYZE MARKET 🚀</button>
+</div>
+
+<div class="card"><div class="title">MARKET ANALYSIS METRICS</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+<div class="metric"><div class="k">SIGNAL</div><div class="v" id="dir">—</div></div>
+<div class="metric"><div class="k">SNR ZONE</div><div class="v" id="snr">—</div></div>
+<div class="metric"><div class="k">H1 CONFIRM</div><div class="v" id="h1">—</div></div>
+<div class="metric"><div class="k">ENTRY</div><div class="v" id="entry">—</div></div>
+</div></div>
+
+<div class="card"><div class="title">◎ AI TRADE SETUP</div>
+<div class="setup"><div class="direction"><span>DIRECTION</span><b id="dirBig">WAITING</b></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div class="metric"><div class="k">CONFIDENCE</div><div class="v" id="conf">—</div></div>
+<div class="metric"><div class="k">STATUS</div><div class="v" id="status" style="font-size:14px">READY</div></div>
+</div></div></div>
+
+<div class="card"><div class="title">◌ PRICE CHART</div><div id="chart" class="chart"></div></div>
+</div>
+
+<script>
+let chart,series;
+const $=id=>document.getElementById(id);
+
+async function analyze(){
+  const key = $('key').value.trim();
+  if(!key) return alert('Masukkan API Key!');
+  try{
+    const [resM5, resH1] = await Promise.all([
+      fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=5min&outputsize=50&apikey=${key}`).then(r=>r.json()),
+      fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=1h&outputsize=20&apikey=${key}`).then(r=>r.json())
+    ]);
+    const data = resM5.values.reverse();
+    const h1Data = resH1.values.reverse();
+    
+    let last = data.at(-1), prev = data.at(-2);
+    let res = Math.max(...data.slice(-20).map(d=>+d.high)), sup = Math.min(...data.slice(-20).map(d=>+d.low));
+    
+    const isBull = (p, c) => +c.close > +p.open && +c.open < +p.close && +c.close > +p.high;
+    const isBear = (p, c) => +c.close < +p.open && +c.open > +p.close && +c.close < +p.low;
+    
+    let bull = isBull(prev, last), bear = isBear(prev, last);
+    let h1Bull = isBull(h1Data.at(-2), h1Data.at(-1)), h1Bear = isBear(h1Data.at(-2), h1Data.at(-1));
+    
+    let sig = bull ? 'BUY' : bear ? 'SELL' : 'NO SIGNAL';
+    $('dir').textContent = sig;
+    $('dirBig').textContent = sig;
+    $('dirBig').className = bull ? 'bull' : bear ? 'sell' : '';
+    $('snr').textContent = bull ? 'SUPPORT' : bear ? 'RESIST' : '---';
+    $('h1').textContent = (h1Bull || h1Bear) ? 'YES' : 'NO';
+    $('entry').textContent = (+last.close).toFixed(0);
+    $('conf').textContent = (bull || bear) ? (h1Bull || h1Bear ? '95%' : '60%') : '---';
+    
+    draw(data);
+  }catch(e){ alert('Error memuat data'); }
+}
+
+function draw(data){
+  if(!chart){
+    chart=LightweightCharts.createChart($('chart'),{layout:{background:{color:'transparent'},textColor:'#aeb8c2'},grid:{vertLines:{visible:false},horzLines:{visible:false}}});
+    series=chart.addSeries(LightweightCharts.CandlestickSeries);
+  }
+  series.setData(data.map(d=>({time:Math.floor(new Date(d.datetime).getTime()/1000),open:+d.open,high:+d.high,low:+d.low,close:+d.close})));
+}
+</script>
+</body>
+</html>
