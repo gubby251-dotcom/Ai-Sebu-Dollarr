@@ -14,7 +14,7 @@
 .liveprice{margin-top:12px;padding:15px;border:1px solid #1e343d;border-radius:13px;background:linear-gradient(135deg,#09151a,#0b1117)}
 .lp-label{font-size:12px;color:#9aa6b2}.lp-status{float:right;font-size:11px;color:#45f08a}
 .lp-row{display:flex;align-items:baseline;gap:12px;margin:7px 0}.lp-row strong{font-size:30px;letter-spacing:-1px}.lp-row span{font-size:14px;color:#45f08a}
-.chart{height:360px;margin-top:14px}.footer{color:#788592;text-align:center;font-size:12px;padding:20px}.warn{color:#f2c44b;text-align:center;font-size:12px}.hide{display:none}@media(max-width:800px){.grid4{grid-template-columns:1fr 1fr}.setup{grid-template-columns:1fr}.tiles{grid-template-columns:1fr 1fr}.logo{font-size:42px}.chart{height:300px}}
+.chart{height:360px;margin-top:14px}.live-price-card{border-color:#17343a}.live-price-card #livePrice{font-variant-numeric:tabular-nums}.footer{color:#788592;text-align:center;font-size:12px;padding:20px}.warn{color:#f2c44b;text-align:center;font-size:12px}.hide{display:none}@media(max-width:800px){.grid4{grid-template-columns:1fr 1fr}.setup{grid-template-columns:1fr}.tiles{grid-template-columns:1fr 1fr}.logo{font-size:42px}.chart{height:300px}}
 </style>
 </head>
 <body>
@@ -35,6 +35,15 @@
 <button class="analyze" onclick="analyze()">ANALYZE MARKET 🚀</button>
 <button class="secondary" onclick="demo()">LOAD DEMO DATA</button>
 <div class="small" style="margin-top:10px">LIVE mode membutuhkan API key Twelve Data. Setelah key diisi, harga XAU/USD diperbarui otomatis dan candle H1/M5 dianalisis dari data terbaru. Tanpa key, gunakan DEMO.</div>
+</div>
+
+<div class="card live-price-card">
+<div class="title">◉ XAU/USD LIVE PRICE <span style="float:right;color:#45f08a;font-size:12px" id="priceLiveDot">● OFFLINE</span></div>
+<div style="text-align:center;padding:8px 0 14px">
+  <div id="livePrice" style="font-size:46px;font-weight:900;letter-spacing:-1px">—</div>
+  <div id="liveChange" class="small" style="font-size:15px;margin-top:7px">Masukkan API key lalu ANALYZE MARKET</div>
+  <div id="liveUpdated" class="small" style="margin-top:7px">Belum ada pembaruan</div>
+</div>
 </div>
 
 <div class="card"><div class="title">〽 ANALYSIS OVERVIEW <span style="float:right;color:#35ed83;font-size:12px">● LIVE</span></div>
@@ -99,42 +108,49 @@ function updatePriceUI(price, previous){
  $('priceStatus').textContent='● LIVE';
  $('priceStatus').style.color='#45f08a';
 }
-async function fetchLive(){
- let key=$('key').value.trim();
- if(!key){ $('priceStatus').textContent='● API KEY NEEDED'; $('priceStatus').style.color='#f2c44b'; return; }
- $('status').textContent='● LOADING LIVE DATA';$('status').style.color='#f4c84b';
- try{
-   let priceJ=await getJson(`https://api.twelvedata.com/price?symbol=XAU/USD&apikey=${encodeURIComponent(key)}`);
-   let price=Number(priceJ.price);
-   let previous=window.lastLivePrice;
-   window.lastLivePrice=price;
-   if(Number.isFinite(price)) updatePriceUI(price,previous);
-
-   let [h1,m5]=await Promise.all([
-     getJson(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=1h&outputsize=220&apikey=${encodeURIComponent(key)}`),
-     getJson(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=${$('tf').value}&outputsize=220&apikey=${encodeURIComponent(key)}`)
-   ]);
-   let H=h1.values.reverse().map(v=>({time:Math.floor(new Date(v.datetime).getTime()/1000),open:+v.open,high:+v.high,low:+v.low,close:+v.close}));
-   data=m5.values.reverse().map(v=>({time:Math.floor(new Date(v.datetime).getTime()/1000),open:+v.open,high:+v.high,low:+v.low,close:+v.close}));
-
-   // Keep the displayed analysis aligned with the newest live quote.
-   if(Number.isFinite(price) && data.length){
-     let last=data[data.length-1];
-     if(price>last.high) last.high=price;
-     if(price<last.low) last.low=price;
-     last.close=price;
-   }
-
-   runAnalysis(H,data);draw();
-   $('status').textContent='● LIVE DATA';$('status').style.color='#45f08a';
- }catch(e){
-   $('status').textContent='● LIVE ERROR';$('status').style.color='#ff5252';
-   $('priceStatus').textContent='● LIVE ERROR';$('priceStatus').style.color='#ff5252';
-   console.error(e);
-   alert('Live gagal: '+e.message+'\\nCek API key, limit API, dan akses simbol XAU/USD.');
- }
+let updateTimer=null;
+function setLivePrice(price, change, percent, stamp){
+  const p=$('livePrice'), c=$('liveChange'), u=$('liveUpdated'), d=$('priceLiveDot');
+  if(price==null){ p.textContent='—'; d.textContent='● OFFLINE'; d.style.color='#ff5252'; return; }
+  p.textContent=Number(price).toFixed(2);
+  const ch=Number(change||0), pc=Number(percent||0);
+  c.textContent=(ch>=0?'▲ +':'▼ ')+ch.toFixed(2)+' ('+pc.toFixed(2)+'%)';
+  c.style.color=ch>=0?'#32e875':'#ff5252';
+  u.textContent='Updated: '+(stamp || new Date().toLocaleTimeString('id-ID'));
+  d.textContent='● LIVE';
+  d.style.color='#45f08a';
 }
-function analyze(){if($('key').value.trim())fetchLive();else{if(!data.length)data=makeDemo();let H=makeDemo(220,3330);runAnalysis(H,data);draw()}}
+async function fetchLive(){
+  let key=$('key').value.trim();
+  if(!key){ demo(); setLivePrice(null); return; }
+  localStorage.setItem('sebu_twelve_key',key);
+  $('status').textContent='● LOADING LIVE DATA';$('status').style.color='#f4c84b';
+  try{
+    let [h1,m5,px]=await Promise.all([
+      fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=1h&outputsize=220&apikey=${encodeURIComponent(key)}`).then(r=>r.json()),
+      fetch(`https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=${$('tf').value}&outputsize=220&apikey=${encodeURIComponent(key)}`).then(r=>r.json()),
+      fetch(`https://api.twelvedata.com/price?symbol=XAU/USD&apikey=${encodeURIComponent(key)}`).then(r=>r.json())
+    ]);
+    if(h1.status==='error'||m5.status==='error'||px.status==='error'){
+      throw Error(h1.message||m5.message||px.message||'API error');
+    }
+    if(!px.price) throw Error('Harga live tidak dikirim oleh Twelve Data');
+    setLivePrice(px.price, px.change, px.percent_change, new Date().toLocaleTimeString('id-ID'));
+    let H=h1.values.reverse().map(v=>({time:Math.floor(new Date(v.datetime).getTime()/1000),open:+v.open,high:+v.high,low:+v.low,close:+v.close}));
+    data=m5.values.reverse().map(v=>({time:Math.floor(new Date(v.datetime).getTime()/1000),open:+v.open,high:+v.high,low:+v.low,close:+v.close}));
+    runAnalysis(H,data);draw();$('status').textContent='● LIVE DATA';$('status').style.color='#45f08a';
+  }catch(e){
+    $('status').textContent='● LIVE ERROR';$('status').style.color='#ff5252';
+    setLivePrice(null);
+    alert('Live gagal: '+e.message+'\\nPastikan API key Twelve Data valid dan XAU/USD tersedia pada akun Anda.');
+  }
+}
+function scheduleLive(){
+  if(updateTimer) clearInterval(updateTimer);
+  const s=+$('interval').value;
+  if(s && $('key').value.trim()) updateTimer=setInterval(fetchLive,s*1000);
+}
+function analyze(){if($('key').value.trim()){fetchLive().then(scheduleLive)}else{if(!data.length)data=makeDemo();let H=makeDemo(220,3330);runAnalysis(H,data);draw();setLivePrice(null)}}
 function demo(){data=makeDemo();let H=makeDemo(220,3330);runAnalysis(H,data);draw();$('status').textContent='● DEMO MODE';$('status').style.color='#f4c84b'}
 function runAnalysis(H,M){
 let hc=H.map(x=>x.close), mc=M.map(x=>x.close), last=M.at(-1), prev=M.at(-2), A=atr(M), e50=ema(hc,50),e200=ema(hc,200);
