@@ -1,1 +1,2579 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SEBU DOLLAR AI — GOLDEN ENGINE</title>
 
+<style>
+:root{
+--bg:#05080c;
+--card:#0b1016;
+--line:#1c2731;
+--gold:#f4c84b;
+--green:#32e875;
+--cyan:#16d9ee;
+--red:#ff5252;
+--text:#edf2f7;
+--muted:#8e9aa8
+}
+
+*{box-sizing:border-box}
+
+body{
+margin:0;
+background:radial-gradient(circle at 50% 0,#13212a 0,#05080c 38%);
+color:var(--text);
+font-family:Inter,Arial,sans-serif
+}
+
+.wrap{
+max-width:1100px;
+margin:auto;
+padding:18px
+}
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center
+}
+
+.premium{
+color:var(--gold);
+font-weight:800
+}
+
+.ready{
+background:#082316;
+border:1px solid #176f43;
+color:#45f08a;
+padding:9px 14px;
+border-radius:22px;
+font-size:13px
+}
+
+.hero{
+text-align:center;
+padding:18px 0 22px
+}
+
+.logo{
+font-size:58px;
+font-weight:900;
+letter-spacing:-4px;
+background:linear-gradient(90deg,#f3c548,#8cc6ef,#eee);
+-webkit-background-clip:text;
+color:transparent
+}
+
+.sub{
+color:#87a4c1;
+font-size:18px;
+letter-spacing:2px
+}
+
+.card{
+background:linear-gradient(145deg,#0d131a,#080d12);
+border:1px solid var(--line);
+border-radius:18px;
+padding:20px;
+margin:16px 0;
+box-shadow:0 12px 35px #0008
+}
+
+.title{
+font-size:21px;
+font-weight:800;
+color:var(--cyan);
+margin-bottom:16px
+}
+
+.grid2,.grid3,.grid4{
+display:grid;
+gap:12px
+}
+
+.grid2{grid-template-columns:1fr 1fr}
+.grid3{grid-template-columns:repeat(3,1fr)}
+.grid4{grid-template-columns:repeat(4,1fr)}
+
+label{
+font-size:12px;
+color:var(--gold);
+display:block;
+margin-bottom:7px
+}
+
+select,button,input{
+width:100%;
+border:1px solid #28343f;
+background:#0c1218;
+color:#fff;
+border-radius:11px;
+padding:14px;
+font-size:15px
+}
+
+button{
+cursor:pointer;
+font-weight:900
+}
+
+.analyze{
+margin-top:14px;
+background:linear-gradient(90deg,#25d63d,#0dbce8);
+border:0;
+font-size:17px
+}
+
+.audio-btn{
+background:#1a2936;
+border:1px solid #2a3d4f;
+color:var(--gold);
+margin-top:8px;
+font-size:13px;
+padding:10px
+}
+
+.metric{
+border:1px solid #1e2a34;
+border-radius:12px;
+padding:16px;
+min-height:112px;
+text-align:center
+}
+
+.metric .k{
+font-size:12px;
+color:#9aa6b2
+}
+
+.metric .v{
+font-size:20px;
+font-weight:900;
+margin-top:13px
+}
+
+.bull,.good{color:var(--green)}
+.sell,.bad{color:var(--red)}
+.wait{color:#f0c642}
+
+.setup{
+display:grid;
+grid-template-columns:1.1fr 2fr;
+gap:12px
+}
+
+.direction{
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+border:1px solid #20302c;
+border-radius:14px;
+min-height:210px;
+text-align:center;
+padding:10px;
+}
+
+.direction b{
+font-size:32px
+}
+
+.tiles{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px
+}
+
+.tile{
+border:1px solid #202c36;
+border-radius:11px;
+padding:15px
+}
+
+.tile span{
+display:block;
+color:#8e9aa8;
+font-size:12px
+}
+
+.tile strong{
+display:block;
+margin-top:8px;
+font-size:18px
+}
+
+.warn{
+color:#f2c44b;
+text-align:center;
+font-size:12px
+}
+
+.footer{
+color:#788592;
+text-align:center;
+font-size:12px;
+padding:20px
+}
+
+.chart-container{
+height:450px;
+width:100%
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+font-size:13px;
+margin-top:10px
+}
+
+th{
+color:var(--muted);
+padding:10px;
+border-bottom:1px solid #28343f;
+text-align:center
+}
+
+td{
+padding:12px;
+text-align:center;
+border-bottom:1px solid #1c2731
+}
+
+.hit-tp{
+color:var(--green);
+font-weight:bold
+}
+
+.hit-sl{
+color:var(--red);
+font-weight:bold
+}
+
+.pending{
+color:var(--gold);
+font-weight:bold
+}
+
+.high-impact{
+background:#ff5252;
+color:#fff;
+padding:4px 8px;
+border-radius:6px;
+font-weight:bold;
+font-size:11px;
+display:inline-block
+}
+
+.news-time{
+color:var(--gold);
+font-weight:bold
+}
+
+.golden{
+color:var(--gold);
+font-weight:900
+}
+
+@media(max-width:800px){
+.grid4,.grid3{
+grid-template-columns:1fr 1fr
+}
+
+.setup{
+grid-template-columns:1fr
+}
+
+.tiles{
+grid-template-columns:1fr 1fr
+}
+
+.logo{
+font-size:42px
+}
+
+.chart-container{
+height:350px
+}
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<div class="top">
+<div class="premium">♛ PREMIUM AI (SPOT GOLD)</div>
+<div class="ready" id="status">● CONNECTING...</div>
+</div>
+
+<div class="hero">
+<div class="logo">$EBU DOLLAR</div>
+<div class="sub">TRADE & EDUCATION</div>
+</div>
+
+<!-- PERFORMANCE -->
+
+<div class="card">
+
+<div class="title">📊 PERFORMANCE & RISK CALCULATOR</div>
+
+<div class="grid4" style="margin-bottom:15px">
+
+<div class="metric">
+<div class="k">WIN RATE</div>
+<div class="v" id="winrate">0%</div>
+</div>
+
+<div class="metric">
+<div class="k">TP HIT</div>
+<div class="v good" id="tpcount">0</div>
+</div>
+
+<div class="metric">
+<div class="k">SL HIT</div>
+<div class="v bad" id="slcount">0</div>
+</div>
+
+<div class="metric">
+<div class="k">TOTAL SIGNALS</div>
+<div class="v" id="totalcount">0</div>
+</div>
+
+</div>
+
+<div class="grid2">
+
+<div>
+<label>EQUITY / MODAL ($)</label>
+<input type="number" id="equity" value="1000" oninput="calcLot()">
+</div>
+
+<div>
+<label>RISK PER TRADE (%)</label>
+<input type="number" id="riskPercent" value="1" oninput="calcLot()">
+</div>
+
+</div>
+
+<div style="margin-top:12px;text-align:center;font-size:14px;color:var(--gold)">
+RECOMMENDED LOT SIZE:
+<strong id="recLot" style="font-size:18px">0.01 Lot</strong>
+</div>
+
+</div>
+
+<!-- MARKET ANALYSIS -->
+
+<div class="card">
+
+<div class="title">▥ MARKET ANALYSIS</div>
+
+<div class="grid2">
+
+<div>
+<label>PAIR / SYMBOL</label>
+<select id="symbol">
+<option value="frxXAUUSD">XAUUSD (OANDA Spot Gold)</option>
+</select>
+</div>
+
+<div>
+<label>TIMEFRAME ENTRY</label>
+<select id="tf" onchange="updateChart()">
+<option value="30" selected>M30</option>
+<option value="15">M15</option>
+<option value="5">M5</option>
+</select>
+</div>
+
+</div>
+
+<button class="analyze" onclick="analyze()">
+ANALYZE MARKET 🚀
+</button>
+
+<button class="audio-btn"
+id="audioToggleBtn"
+onclick="enableAudioAndNotifications()">
+🔔 AKTIFKAN SUARA & NOTIFIKASI BROWSER
+</button>
+
+</div>
+
+<!-- LIVE PRICE -->
+
+<div class="card">
+
+<div class="title">◉ LIVE PRICE TICKER</div>
+
+<div class="tradingview-widget-container">
+<div class="tradingview-widget-container__widget"></div>
+
+<script
+type="text/javascript"
+src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js"
+async>
+{
+"symbol":"OANDA:XAUUSD",
+"width":"100%",
+"colorTheme":"dark",
+"isTransparent":true,
+"locale":"id"
+}
+</script>
+
+</div>
+</div>
+
+<!-- ANALYSIS -->
+
+<div class="card">
+
+<div class="title">
+〽 ANALYSIS OVERVIEW
+<span style="float:right;color:#35ed83;font-size:12px">
+● LIVE
+</span>
+</div>
+
+<div class="grid4">
+
+<div class="metric">
+<div class="k">MAIN TREND (EMA 9/21 H1)</div>
+<div class="v" id="trend">WAITING</div>
+</div>
+
+<div class="metric">
+<div class="k">ENGULFING PATTERN</div>
+<div class="v" id="entry">NONE</div>
+</div>
+
+<div class="metric">
+<div class="k">RBS / SBR STATUS</div>
+<div class="v" id="rbs_sbr_status">NO BREAKOUT</div>
+</div>
+
+<div class="metric">
+<div class="k">SIGNAL CONFIDENCE</div>
+<div class="v" id="confidence">—</div>
+</div>
+
+</div>
+</div>
+
+<!-- INDICATORS -->
+
+<div class="card">
+
+<div class="title">
+⚡ TECHNICAL INDICATORS & SMART MONEY
+</div>
+
+<div class="grid3">
+
+<div class="metric">
+<div class="k">RSI (14) MOMENTUM</div>
+<div class="v" id="rsi_val">—</div>
+</div>
+
+<div class="metric">
+<div class="k">ATR 14 VOLATILITY</div>
+<div class="v" id="atr_val">—</div>
+</div>
+
+<div class="metric">
+<div class="k">SMART MONEY FVG GAP</div>
+<div class="v" id="fvg_val">NO GAP</div>
+</div>
+
+</div>
+</div>
+
+<!-- AI SETUP -->
+
+<div class="card">
+
+<div class="title">
+
+◎ AI TRADE SETUP
+(GOLDEN ZONE)
+
+<span
+id="setupStatusBadge"
+style="font-size:12px;font-weight:normal;float:right;color:var(--gold)">
+[WAITING FOR FORMATION]
+</span>
+
+</div>
+
+<div class="setup">
+
+<div class="direction" id="directionBox">
+
+<span>DIRECTION</span>
+
+<b id="direction">NO SIGNAL</b>
+
+<div id="directionIcon">
+WAITING FOR ENGULFING PATTERN
+</div>
+
+</div>
+
+<div class="tiles">
+
+<div class="tile">
+<span>ENTRY ZONA GOLDEN</span>
+<strong class="golden" id="zone">—</strong>
+</div>
+
+<div class="tile">
+<span>STOP LOSS (WICK)</span>
+<strong class="bad" id="sl">—</strong>
+</div>
+
+<div class="tile">
+<span>TAKE PROFIT (RR 1:1)</span>
+<strong class="good" id="tp1">—</strong>
+</div>
+
+<div class="tile">
+<span>JARAK SL / RISK</span>
+<strong id="sl_pips">—</strong>
+</div>
+
+<div class="tile">
+<span>TARGET PROFIT</span>
+<strong id="tp_pips">—</strong>
+</div>
+
+<div class="tile">
+<span>RISK : REWARD</span>
+<strong id="rr">—</strong>
+</div>
+
+</div>
+</div>
+
+</div>
+
+<!-- NEWS -->
+
+<div class="card">
+
+<div class="title">
+
+🔥 HIGH IMPACT ECONOMIC NEWS
+(USD / XAU)
+
+<span
+id="newsUpdateBadge"
+style="float:right;font-size:11px;color:var(--cyan);font-weight:normal">
+Auto-update per 5 min
+</span>
+
+</div>
+
+<p style="font-size:12px;color:var(--muted);margin-top:-10px">
+Daftar berita berdampak besar yang wajib diwaspadai sebelum entry.
+</p>
+
+<table>
+
+<thead>
+
+<tr>
+<th>TANGGAL / JAM</th>
+<th>CURRENCY</th>
+<th>EVENT NEWS</th>
+<th>IMPACT</th>
+<th>FORECAST</th>
+<th>PREVIOUS</th>
+</tr>
+
+</thead>
+
+<tbody id="newsTableBody">
+
+<tr>
+<td colspan="6" style="color:var(--gold)">
+Memuat data berita...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+<!-- HISTORY -->
+
+<div class="card">
+
+<div class="title">
+📜 SIGNAL PERFORMANCE HISTORY
+</div>
+
+<table id="historyTable">
+
+<thead>
+
+<tr>
+<th>TIME</th>
+<th>SIGNAL</th>
+<th>ENTRY GOLDEN</th>
+<th>SL WICK</th>
+<th>TP 1:1</th>
+<th>STATUS</th>
+</tr>
+
+</thead>
+
+<tbody id="historyBody"></tbody>
+
+</table>
+
+<button
+onclick="clearHistory()"
+style="margin-top:15px;background:transparent;border:1px solid #444;color:#aaa;padding:8px;border-radius:8px;font-size:12px">
+
+Clear History Data
+
+</button>
+
+</div>
+
+<!-- INSIGHTS -->
+
+<div class="card">
+
+<div class="title">
+◉ MARKET INSIGHTS (KEY ZONES & STRUCTURE)
+</div>
+
+<div class="grid4">
+
+<div class="metric">
+<div class="k">DEMAND / SUPPORT</div>
+<div class="v bull" id="snr">—</div>
+</div>
+
+<div class="metric">
+<div class="k">SUPPLY / RESIST</div>
+<div class="v sell" id="keylevel">—</div>
+</div>
+
+<div class="metric">
+<div class="k">RBS / SBR ZONE</div>
+<div class="v" id="rbs_zone_val">—</div>
+</div>
+
+<div class="metric">
+<div class="k">VOLATILITY</div>
+<div class="v" id="vol">—</div>
+</div>
+
+</div>
+</div>
+
+<!-- CHART -->
+
+<div class="card">
+
+<div class="title">
+◌ REALTIME PRICE CHART
+</div>
+
+<div class="chart-container" id="tv_chart"></div>
+
+</div>
+
+<div class="warn">
+⚠ PASTIKAN SELALU MENGGUNAKAN MANAJEMEN RISIKO & DISIPLIN DALAM SETIAP EKSEKUSI TRADING.
+</div>
+
+<div class="footer">
+$EBU DOLLAR AI · Golden Engine Focus.
+</div>
+
+</div>
+
+<script src="https://s3.tradingview.com/tv.js"></script>
+
+<script>
+
+let audioCtx=null;
+let ws=null;
+
+let candlesH1=[];
+let candlesEntry=[];
+
+let signalHistory=
+JSON.parse(localStorage.getItem('signalHistory'))||[];
+
+let lastProcessedCandleTime=0;
+let retestAlertTriggered=false;
+
+const $=id=>document.getElementById(id);
+
+function fmt(x){
+return x==null||isNaN(x)
+?'—'
+:Number(x).toFixed(2);
+}
+
+/* =========================================================
+VISIBILITY
+========================================================= */
+
+document.addEventListener('visibilitychange',()=>{
+
+if(document.visibilityState==='visible'){
+
+if(
+!ws||
+ws.readyState===WebSocket.CLOSED||
+ws.readyState===WebSocket.CLOSING
+){
+
+$('status').textContent='● RECONNECTING...';
+$('status').style.color='#f4c84b';
+
+initWebSocket();
+fetchHighImpactNews();
+
+}
+
+}
+
+});
+
+/* =========================================================
+NEWS
+========================================================= */
+
+async function fetchHighImpactNews(){
+
+const tableBody=$('newsTableBody');
+const badge=$('newsUpdateBadge');
+
+if(badge) badge.textContent='Updating...';
+
+try{
+
+const res=await fetch(
+'https://min-api.cryptocompare.com/data/v2/news/?lang=EN'
+);
+
+const result=await res.json();
+
+if(result&&result.Data&&result.Data.length>0){
+
+const filtered=result.Data.filter(item=>{
+
+const text=
+(item.title+' '+item.body).toUpperCase();
+
+return(
+text.includes('USD')||
+text.includes('FED')||
+text.includes('CPI')||
+text.includes('INFLATION')||
+text.includes('GOLD')||
+text.includes('NFP')
+);
+
+}).slice(0,5);
+
+if(filtered.length){
+
+tableBody.innerHTML='';
+
+filtered.forEach(item=>{
+
+const dateObj=
+new Date(item.published_on*1000);
+
+const dateStr=
+dateObj.toLocaleDateString(
+'id-ID',
+{day:'numeric',month:'short'}
+);
+
+const timeStr=
+dateObj.toLocaleTimeString(
+'id-ID',
+{hour:'2-digit',minute:'2-digit'}
+);
+
+tableBody.innerHTML+=`
+
+<tr>
+
+<td class="news-time">
+${dateStr} · ${timeStr}
+</td>
+
+<td>
+<strong style="color:var(--cyan)">
+USD
+</strong>
+</td>
+
+<td style="text-align:left">
+${item.title.slice(0,65)}...
+</td>
+
+<td>
+<span class="high-impact">
+HIGH
+</span>
+</td>
+
+<td>—</td>
+<td>—</td>
+
+</tr>
+
+`;
+
+});
+
+if(badge){
+
+badge.textContent=
+'Updated: '+
+new Date().toLocaleTimeString(
+'id-ID',
+{hour:'2-digit',minute:'2-digit'}
+);
+
+}
+
+return;
+
+}
+
+}
+
+}catch(e){
+
+console.warn('News API gagal, menggunakan jadwal dinamis.');
+
+}
+
+renderDynamicEconomicSchedule();
+
+if(badge)
+badge.textContent='Updated (Dynamic Schedule)';
+
+}
+
+/* =========================================================
+DYNAMIC NEWS FALLBACK
+========================================================= */
+
+function renderDynamicEconomicSchedule(){
+
+const tableBody=$('newsTableBody');
+
+const today=new Date();
+
+const tomorrow=new Date(today);
+
+tomorrow.setDate(
+today.getDate()+1
+);
+
+const opt={
+day:'numeric',
+month:'short'
+};
+
+const strToday=
+today.toLocaleDateString('id-ID',opt);
+
+const strTomorrow=
+tomorrow.toLocaleDateString('id-ID',opt);
+
+const day=today.getDay();
+
+let todayEvents=[];
+let tomorrowEvents=[];
+
+if(day===4){
+
+todayEvents=[
+'Unemployment Claims',
+'Philly Fed Manufacturing Index'
+];
+
+tomorrowEvents=[
+'Flash Services PMI',
+'Flash Manufacturing PMI'
+];
+
+}else if(day===5){
+
+todayEvents=[
+'Core PCE Price Index',
+'Revised UoM Consumer Sentiment'
+];
+
+tomorrowEvents=[
+'Pasar Tutup Weekend',
+'Pasar Tutup Weekend'
+];
+
+}else{
+
+todayEvents=[
+'Building Permits & Housing Starts',
+'FOMC Member Speaks'
+];
+
+tomorrowEvents=[
+'Core CPI & Consumer Price Index',
+'Crude Oil Inventories'
+];
+
+}
+
+const schedule=[
+
+{
+time:`${strToday} · 19:30 WIB`,
+title:todayEvents[0]
+},
+
+{
+time:`${strToday} · 21:00 WIB`,
+title:todayEvents[1]
+},
+
+{
+time:`${strTomorrow} · 19:30 WIB`,
+title:tomorrowEvents[0]
+},
+
+{
+time:`${strTomorrow} · 20:45 WIB`,
+title:tomorrowEvents[1]
+}
+
+];
+
+tableBody.innerHTML='';
+
+schedule.forEach(item=>{
+
+tableBody.innerHTML+=`
+
+<tr>
+
+<td class="news-time">
+${item.time}
+</td>
+
+<td>
+<strong style="color:var(--cyan)">
+USD
+</strong>
+</td>
+
+<td style="text-align:left">
+${item.title}
+</td>
+
+<td>
+<span class="high-impact">
+HIGH
+</span>
+</td>
+
+<td>—</td>
+<td>—</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+/* =========================================================
+HISTORY
+========================================================= */
+
+function saveHistory(){
+
+localStorage.setItem(
+'signalHistory',
+JSON.stringify(signalHistory)
+);
+
+renderHistory();
+updateTradeSetupFromHistory();
+
+}
+
+function clearHistory(){
+
+signalHistory=[];
+lastProcessedCandleTime=0;
+
+saveHistory();
+
+}
+
+function renderHistory(){
+
+const body=$('historyBody');
+
+body.innerHTML='';
+
+let tpCount=0;
+let slCount=0;
+
+signalHistory.slice(0,20).forEach(s=>{
+
+if(s.status==='HIT TP') tpCount++;
+if(s.status==='HIT SL') slCount++;
+
+const isBuy=s.type.includes('BUY');
+
+body.innerHTML+=`
+
+<tr>
+
+<td>${s.time}</td>
+
+<td class="${isBuy?'bull':'sell'}">
+${s.type}
+</td>
+
+<td class="golden">
+${s.entry}
+</td>
+
+<td>${s.sl}</td>
+
+<td>${s.tp}</td>
+
+<td class="${
+s.status==='HIT TP'
+?'hit-tp'
+:s.status==='HIT SL'
+?'hit-sl'
+:'pending'
+}">
+${s.status}
+</td>
+
+</tr>
+
+`;
+
+});
+
+const total=tpCount+slCount;
+
+$('tpcount').textContent=tpCount;
+$('slcount').textContent=slCount;
+$('totalcount').textContent=total;
+
+$('winrate').textContent=
+total>0
+?((tpCount/total)*100).toFixed(1)+'%'
+:'0%';
+
+}
+
+/* =========================================================
+DISPLAY SETUP & MANUAL ENTRY GUIDE
+========================================================= */
+
+function updateTradeSetupFromHistory(){
+
+const pending=
+signalHistory.find(
+s=>s.status==='PENDING'
+);
+
+if(pending){
+
+const entry=parseFloat(pending.entry);
+const sl=parseFloat(pending.sl);
+const tp=parseFloat(pending.tp);
+
+const pips=Math.abs(entry-sl)*10;
+
+const isBuy=pending.type.includes('BUY');
+
+$('direction').textContent=
+pending.type;
+
+$('direction').className=
+isBuy?'bull':'sell';
+
+$('directionIcon').innerHTML=`
+<div style="font-size:12px; color:var(--gold); margin-bottom:4px;">SIAPKAN ENTRY MANUAL</div>
+<div style="font-size:15px; font-weight:bold; line-height:1.4;">Tunggu Retest ke:<br><span style="color:var(--cyan); font-size:20px;">${pending.entry}</span></div>
+`;
+
+$('zone').textContent=pending.entry;
+$('sl').textContent=pending.sl;
+$('tp1').textContent=pending.tp;
+
+$('sl_pips').textContent=
+pips.toFixed(1)+' Pips';
+
+$('tp_pips').textContent=
+pips.toFixed(1)+' Pips';
+
+$('rr').textContent='1 : 1 FIXED';
+
+$('setupStatusBadge').textContent=
+'[MENUNGGU RETEST 50%]';
+
+}else{
+
+$('direction').textContent='NO SIGNAL';
+$('direction').className='wait';
+
+$('directionIcon').textContent=
+'WAITING FOR ENGULFING PATTERN';
+
+$('zone').textContent='—';
+$('sl').textContent='—';
+$('tp1').textContent='—';
+$('sl_pips').textContent='—';
+$('tp_pips').textContent='—';
+$('rr').textContent='—';
+
+$('setupStatusBadge').textContent=
+'[WAITING FOR FORMATION]';
+
+}
+
+}
+
+/* =========================================================
+ADD SIGNAL
+========================================================= */
+
+function addSignal(
+type,
+entry,
+sl,
+tp,
+candleEpoch
+){
+
+if(
+candleEpoch &&
+candleEpoch===lastProcessedCandleTime
+)return;
+
+const duplicate=
+signalHistory.length>0&&
+signalHistory[0].type===type&&
+signalHistory[0].entry===entry&&
+signalHistory[0].status==='PENDING';
+
+if(duplicate)return;
+
+if(candleEpoch)
+lastProcessedCandleTime=candleEpoch;
+
+retestAlertTriggered=false;
+
+signalHistory.unshift({
+
+time:new Date().toLocaleTimeString(),
+
+type:type,
+
+entry:entry,
+
+sl:sl,
+
+tp:tp,
+
+status:'PENDING'
+
+});
+
+saveHistory();
+
+}
+
+/* =========================================================
+CHECK SIGNAL TP / SL
+========================================================= */
+
+function checkSignals(currentPrice){
+
+let changed=false;
+
+signalHistory.forEach(s=>{
+
+if(s.status!=='PENDING')return;
+
+const entry=parseFloat(s.entry);
+const sl=parseFloat(s.sl);
+const tp=parseFloat(s.tp);
+
+if(
+!retestAlertTriggered&&
+Math.abs(currentPrice-entry)<=0.3
+){
+
+triggerRetestAudioAlert(
+s.type,
+entry
+);
+
+retestAlertTriggered=true;
+
+}
+
+if(s.type.includes('BUY')){
+
+if(currentPrice>=tp){
+
+s.status='HIT TP';
+changed=true;
+
+}else if(currentPrice<=sl){
+
+s.status='HIT SL';
+changed=true;
+
+}
+
+}else{
+
+if(currentPrice<=tp){
+
+s.status='HIT TP';
+changed=true;
+
+}else if(currentPrice>=sl){
+
+s.status='HIT SL';
+changed=true;
+
+}
+
+}
+
+});
+
+if(changed)saveHistory();
+
+}
+
+/* =========================================================
+LOT
+========================================================= */
+
+function calcLot(){
+
+const eq=
+parseFloat($('equity').value)||0;
+
+const risk=
+parseFloat($('riskPercent').value)||0;
+
+const lot=
+(eq*(risk/100))/100;
+
+$('recLot').textContent=
+(lot<0.01?0.01:lot).toFixed(2)
++' Lot';
+
+}
+
+/* =========================================================
+TRADINGVIEW
+========================================================= */
+
+function loadTradingViewChart(interval){
+
+$('tv_chart').innerHTML='';
+
+new TradingView.widget({
+
+autosize:true,
+
+symbol:'OANDA:XAUUSD',
+
+interval:interval,
+
+timezone:'Asia/Jakarta',
+
+theme:'dark',
+
+style:'1',
+
+locale:'id',
+
+toolbar_bg:'#0d131a',
+
+enable_publishing:false,
+
+allow_symbol_change:false,
+
+container_id:'tv_chart'
+
+});
+
+}
+
+function updateChart(){
+
+const tf=$('tf').value;
+
+loadTradingViewChart(tf);
+
+initWebSocket();
+
+}
+
+/* =========================================================
+AUDIO / NOTIFICATION
+========================================================= */
+
+function enableAudioAndNotifications(){
+
+if(!audioCtx){
+
+audioCtx=
+new(
+window.AudioContext||
+window.webkitAudioContext
+)();
+
+}
+
+if(audioCtx.state==='suspended')
+audioCtx.resume();
+
+if('Notification' in window){
+
+if(Notification.permission!=='granted'){
+
+Notification.requestPermission();
+
+}
+
+}
+
+$('audioToggleBtn').textContent=
+'🔔 SUARA & NOTIFIKASI BROWSER AKTIF';
+
+$('audioToggleBtn').style.background=
+'#082316';
+
+$('audioToggleBtn').style.color=
+'#45f08a';
+
+}
+
+/* =========================================================
+SIGNAL AUDIO
+========================================================= */
+
+function triggerAudioAlert(type){
+
+if(audioCtx&&audioCtx.state==='running'){
+
+const isBuy=type.includes('BUY');
+
+const freqs=isBuy
+?[880,1046.50,1318.51]
+:[587.33,493.88,392];
+
+[0,0.3,0.6].forEach(
+(delay,index)=>{
+
+const osc=
+audioCtx.createOscillator();
+
+const gain=
+audioCtx.createGain();
+
+osc.connect(gain);
+gain.connect(audioCtx.destination);
+
+osc.type='sawtooth';
+
+osc.frequency.setValueAtTime(
+freqs[index],
+audioCtx.currentTime+delay
+);
+
+gain.gain.setValueAtTime(
+0.4,
+audioCtx.currentTime+delay
+);
+
+gain.gain.exponentialRampToValueAtTime(
+0.001,
+audioCtx.currentTime+delay+0.25
+);
+
+osc.start(
+audioCtx.currentTime+delay
+);
+
+osc.stop(
+audioCtx.currentTime+delay+0.25
+);
+
+});
+
+}
+
+if(
+'Notification' in window&&
+Notification.permission==='granted'
+){
+
+new Notification(
+`🚨 SINYAL ${type} TERBENTUK!`,
+{
+
+body:
+'Candle Engulfing sudah CLOSE. Siapkan entry manual di Golden Zone 50% body-to-body, SL di sumbu ekstrim.',
+
+requireInteraction:true
+
+}
+
+);
+
+}
+
+}
+
+/* =========================================================
+RETEST ALERT
+========================================================= */
+
+function triggerRetestAudioAlert(
+type,
+entryPrice
+){
+
+if(audioCtx&&audioCtx.state==='running'){
+
+[0,0.15,0.3].forEach(delay=>{
+
+const osc=
+audioCtx.createOscillator();
+
+const gain=
+audioCtx.createGain();
+
+osc.connect(gain);
+gain.connect(audioCtx.destination);
+
+osc.type='sine';
+
+osc.frequency.setValueAtTime(
+1500,
+audioCtx.currentTime+delay
+);
+
+gain.gain.setValueAtTime(
+0.5,
+audioCtx.currentTime+delay
+);
+
+gain.gain.exponentialRampToValueAtTime(
+0.001,
+audioCtx.currentTime+delay+0.1
+);
+
+osc.start(
+audioCtx.currentTime+delay
+);
+
+osc.stop(
+audioCtx.currentTime+delay+0.1
+);
+
+});
+
+}
+
+if(
+'Notification' in window&&
+Notification.permission==='granted'
+){
+
+new Notification(
+'🎯 HARGA MENINGGALKAN RETEST / MASUK GOLDEN ZONE!',
+{
+
+body:
+`Harga menyentuh ${entryPrice}. Bersiap eksekusi entry manual sekarang.`
+
+}
+
+);
+
+}
+
+}
+
+/* =========================================================
+EMA
+========================================================= */
+
+function calcEMA(candles,period){
+
+if(!candles||!candles.length)
+return[];
+
+const closes=
+candles.map(c=>Number(c.close));
+
+const k=
+2/(period+1);
+
+let emaArr=[closes[0]];
+
+for(let i=1;i<closes.length;i++){
+
+emaArr.push(
+closes[i]*k+
+emaArr[i-1]*(1-k)
+);
+
+}
+
+return emaArr;
+
+}
+
+/* =========================================================
+RSI
+========================================================= */
+
+function calcRSI(
+candles,
+period=14
+){
+
+if(!candles||candles.length<=period)
+return 50;
+
+const closes=
+candles.map(c=>Number(c.close));
+
+let gains=0;
+let losses=0;
+
+for(let i=1;i<=period;i++){
+
+const diff=
+closes[i]-closes[i-1];
+
+if(diff>=0)
+gains+=diff;
+else
+losses-=diff;
+
+}
+
+let avgGain=gains/period;
+let avgLoss=losses/period;
+
+for(
+let i=period+1;
+i<closes.length;
+i++
+){
+
+const diff=
+closes[i]-closes[i-1];
+
+avgGain=
+(
+avgGain*(period-1)+
+(diff>=0?diff:0)
+)/period;
+
+avgLoss=
+(
+avgLoss*(period-1)+
+(diff<0?-diff:0)
+)/period;
+
+}
+
+const rs=
+avgGain/(avgLoss||1);
+
+return 100-(100/(1+rs));
+
+}
+
+/* =========================================================
+ATR
+========================================================= */
+
+function calcATR(
+candles,
+period=14
+){
+
+if(!candles||candles.length<=period)
+return 1.5;
+
+const trs=[];
+
+for(let i=1;i<candles.length;i++){
+
+const c=candles[i];
+const p=candles[i-1];
+
+const tr=Math.max(
+
+Number(c.high)-Number(c.low),
+
+Math.abs(
+Number(c.high)-Number(p.close)
+),
+
+Math.abs(
+Number(c.low)-Number(p.close)
+)
+
+);
+
+trs.push(tr);
+
+}
+
+return trs
+.slice(-period)
+.reduce((a,b)=>a+b,0)/period;
+
+}
+
+/* =========================================================
+FVG
+========================================================= */
+
+function checkFVG(candles){
+
+if(!candles||candles.length<3)
+return null;
+
+const c1=
+candles[candles.length-3];
+
+const c3=
+candles[candles.length-1];
+
+if(
+Number(c3.low)>
+Number(c1.high)
+){
+
+return{
+
+type:'BULLISH',
+
+gapLow:Number(c1.high),
+
+gapHigh:Number(c3.low)
+
+};
+
+}
+
+if(
+Number(c3.high)<
+Number(c1.low)
+){
+
+return{
+
+type:'BEARISH',
+
+gapLow:Number(c3.high),
+
+gapHigh:Number(c1.low)
+
+};
+
+}
+
+return null;
+
+}
+
+/* =========================================================
+SNR / SND
+========================================================= */
+
+function getSnRAndSnD(candles){
+
+const highs=
+candles.map(c=>Number(c.high));
+
+const lows=
+candles.map(c=>Number(c.low));
+
+return{
+
+support:
+Math.min(...lows.slice(-20)),
+
+resistance:
+Math.max(...highs.slice(-20))
+
+};
+
+}
+
+/* =========================================================
+RBS / SBR
+========================================================= */
+
+function checkRBS_SBR(candles){
+
+if(!candles||candles.length<15){
+
+return{
+
+isRBS:false,
+isSBR:false,
+rbsLevel:null,
+sbrLevel:null
+
+};
+
+}
+
+const recent=
+candles.slice(-15);
+
+const closes=
+recent.map(c=>Number(c.close));
+
+const highs=
+recent.map(c=>Number(c.high));
+
+const lows=
+recent.map(c=>Number(c.low));
+
+const prevResistance=
+Math.max(...highs.slice(0,8));
+
+const prevSupport=
+Math.min(...lows.slice(0,8));
+
+const currentPrice=
+closes[closes.length-1];
+
+const isRBS=
+currentPrice>prevResistance&&
+Math.abs(currentPrice-prevResistance)<=2.5;
+
+const isSBR=
+currentPrice<prevSupport&&
+Math.abs(currentPrice-prevSupport)<=2.5;
+
+return{
+
+isRBS,
+isSBR,
+
+rbsLevel:prevResistance,
+
+sbrLevel:prevSupport
+
+};
+
+}
+
+/* =========================================================
+🔥 FINAL ENGULFING ENGINE (BODY 50% & SL SUMBU EKSTRIM KESELURUHAN)
+========================================================= */
+
+function checkEngulfingSetup(candles){
+
+if(!candles||candles.length<6)
+return null;
+
+const engulfIndex=
+candles.length-2;
+
+const cEngulf=
+candles[engulfIndex];
+
+if(!cEngulf)
+return null;
+
+const open=
+Number(cEngulf.open);
+
+const close=
+Number(cEngulf.close);
+
+const high=
+Number(cEngulf.high);
+
+const low=
+Number(cEngulf.low);
+
+const bodyHigh=
+Math.max(open,close);
+
+const bodyLow=
+Math.min(open,close);
+
+
+/* =========================================================
+BUY ENGULFING
+========================================================= */
+
+if(close>open){
+
+let correctionCount=0;
+
+for(
+let i=engulfIndex-1;
+i>=0;
+i--
+){
+
+const c=candles[i];
+
+if(
+Number(c.close)<
+Number(c.open)
+){
+
+correctionCount++;
+
+}else{
+
+break;
+
+}
+
+}
+
+if(correctionCount<2)
+return null;
+
+const lastCorrection=
+candles[engulfIndex-1];
+
+const lastOpen=
+Number(lastCorrection.open);
+
+const lastClose=
+Number(lastCorrection.close);
+
+const lastBodyHigh=
+Math.max(
+lastOpen,
+lastClose
+);
+
+const lastBodyLow=
+Math.min(
+lastOpen,
+lastClose
+);
+
+const validEngulfing=
+bodyLow<=lastBodyLow&&
+bodyHigh>=lastBodyHigh;
+
+if(!validEngulfing)
+return null;
+
+// 🔥 GOLDEN ENTRY 50% BODY-TO-BODY
+const entryPrice=
+(lastBodyLow+bodyHigh)/2;
+
+// 🔥 SL = AMBIL SUMBU PALING RENDAH DARI KESELURUHAN RENTANG KOREKSI & ENGULFING
+let lowestWick = low;
+for (let i = engulfIndex; i >= engulfIndex - correctionCount; i--) {
+    if (candles[i] && Number(candles[i].low) < lowestWick) {
+        lowestWick = Number(candles[i].low);
+    }
+}
+const slPrice = lowestWick;
+
+const riskDistance=
+entryPrice-slPrice;
+
+if(riskDistance<=0)
+return null;
+
+const tpPrice=
+entryPrice+riskDistance;
+
+return{
+
+type:'BUY',
+
+correctionCount:correctionCount,
+
+entryPrice:entryPrice,
+
+slPrice:slPrice,
+
+tpPrice:tpPrice,
+
+epoch:cEngulf.epoch,
+
+confirmed:true
+
+};
+
+}
+
+
+/* =========================================================
+SELL ENGULFING
+========================================================= */
+
+if(close<open){
+
+let correctionCount=0;
+
+for(
+let i=engulfIndex-1;
+i>=0;
+i--
+){
+
+const c=candles[i];
+
+if(
+Number(c.close)>
+Number(c.open)
+){
+
+correctionCount++;
+
+}else{
+
+break;
+
+}
+
+}
+
+if(correctionCount<2)
+return null;
+
+const lastCorrection=
+candles[engulfIndex-1];
+
+const lastOpen=
+Number(lastCorrection.open);
+
+const lastClose=
+Number(lastCorrection.close);
+
+const lastBodyHigh=
+Math.max(
+lastOpen,
+lastClose
+);
+
+const lastBodyLow=
+Math.min(
+lastOpen,
+lastClose
+);
+
+const validEngulfing=
+bodyHigh>=lastBodyHigh&&
+bodyLow<=lastBodyLow;
+
+if(!validEngulfing)
+return null;
+
+// 🔥 GOLDEN ENTRY 50% BODY-TO-BODY
+const entryPrice=
+(lastBodyHigh+bodyLow)/2;
+
+// 🔥 SL = AMBIL SUMBU PALING TINGGI DARI KESELURUHAN RENTANG KOREKSI & ENGULFING
+let highestWick = high;
+for (let i = engulfIndex; i >= engulfIndex - correctionCount; i--) {
+    if (candles[i] && Number(candles[i].high) > highestWick) {
+        highestWick = Number(candles[i].high);
+    }
+}
+const slPrice = highestWick;
+
+const riskDistance=
+slPrice-entryPrice;
+
+if(riskDistance<=0)
+return null;
+
+const tpPrice=
+entryPrice-riskDistance;
+
+return{
+
+type:'SELL',
+
+correctionCount:correctionCount,
+
+entryPrice:entryPrice,
+
+slPrice:slPrice,
+
+tpPrice:tpPrice,
+
+epoch:cEngulf.epoch,
+
+confirmed:true
+
+};
+
+}
+
+return null;
+
+}
+
+/* =========================================================
+REQUEST CANDLE DATA
+========================================================= */
+
+function requestCandleData(){
+
+if(
+ws&&
+ws.readyState===WebSocket.OPEN
+){
+
+const tfSec=
+parseInt($('tf').value)*60;
+
+ws.send(
+JSON.stringify({
+
+ticks_history:
+'frxXAUUSD',
+
+adjust_start_time:1,
+
+count:100,
+
+end:'latest',
+
+granularity:3600,
+
+style:'candles'
+
+})
+);
+
+ws.send(
+JSON.stringify({
+
+ticks_history:
+'frxXAUUSD',
+
+adjust_start_time:1,
+
+count:100,
+
+end:'latest',
+
+granularity:tfSec,
+
+style:'candles'
+
+})
+);
+
+}
+
+}
+
+/* =========================================================
+WEBSOCKET (FIXED NETLIFY CONNECTION)
+========================================================= */
+
+function initWebSocket(){
+
+if(ws){
+
+if(ws.readyState===WebSocket.OPEN){
+
+requestCandleData();
+
+return;
+
+}
+
+try{
+ws.close();
+}catch(e){}
+
+}
+
+$('status').textContent=
+'● CONNECTING WEBSOCKET...';
+
+$('status').style.color=
+'#f4c84b';
+
+ws=
+new WebSocket(
+'wss://ws.binaryws.com/websockets/v3?app_id=1089'
+);
+
+ws.onopen=()=>{
+
+requestCandleData();
+
+};
+
+ws.onmessage=(msg)=>{
+
+try {
+const data=
+JSON.parse(msg.data);
+
+if(data.msg_type==='candles'){
+
+const reqGran=
+data.echo_req.granularity;
+
+if(reqGran===3600){
+
+candlesH1=
+data.candles||[];
+
+}else{
+
+candlesEntry=
+data.candles||[];
+
+}
+
+if(
+candlesH1.length>30&&
+candlesEntry.length>30
+){
+
+processAnalysis();
+
+$('status').textContent=
+'● LIVE DATA CONNECTED';
+
+$('status').style.color=
+'#45f08a';
+
+}
+
+}
+} catch(err) {
+console.error("Parsing message error:", err);
+}
+
+};
+
+ws.onerror=(err)=>{
+
+console.warn("WebSocket error occurred:", err);
+
+$('status').textContent=
+'● ERROR WS CONNECTION';
+
+$('status').style.color=
+'#ff5252';
+
+};
+
+ws.onclose=()=>{
+
+$('status').textContent=
+'● DISCONNECTED';
+
+$('status').style.color=
+'#ff5252';
+
+setTimeout(()=>{
+
+if(
+document.visibilityState==='visible'
+){
+
+initWebSocket();
+
+}
+
+},3000);
+
+};
+
+}
+
+/* =========================================================
+MAIN ANALYSIS
+========================================================= */
+
+function processAnalysis(){
+
+if(
+!candlesEntry.length||
+!candlesH1.length
+)return;
+
+const currentPrice=
+Number(
+candlesEntry[
+candlesEntry.length-1
+].close
+);
+
+checkSignals(currentPrice);
+
+const ema9Arr=
+calcEMA(candlesH1,9);
+
+const ema21Arr=
+calcEMA(candlesH1,21);
+
+const ema9=
+ema9Arr[ema9Arr.length-1];
+
+const ema21=
+ema21Arr[ema21Arr.length-1];
+
+const isTrendBullish=
+ema9>ema21;
+
+const isTrendBearish=
+ema9<ema21;
+
+const mainTrend=
+isTrendBullish
+?'BULLISH (EMA 9 > 21)'
+:'BEARISH (EMA 9 < 21)';
+
+const rbsSbrEntry=
+checkRBS_SBR(candlesEntry);
+
+const rbsSbrH1=
+checkRBS_SBR(candlesH1);
+
+const isRBS=
+rbsSbrEntry.isRBS||
+rbsSbrH1.isRBS;
+
+const isSBR=
+rbsSbrEntry.isSBR||
+rbsSbrH1.isSBR;
+
+const rsiVal=
+calcRSI(candlesEntry,14);
+
+const atrVal=
+calcATR(candlesEntry,14);
+
+const fvgInfo=
+checkFVG(candlesEntry);
+
+const engSetup=
+checkEngulfingSetup(
+candlesEntry
+);
+
+let signalType=
+'NO SIGNAL';
+
+let entryPrice=null;
+let slPrice=null;
+let tpPrice=null;
+let candleEpoch=null;
+
+if(engSetup){
+
+if(
+engSetup.type==='BUY'&&
+isTrendBullish
+){
+
+signalType='BUY';
+
+entryPrice=
+engSetup.entryPrice;
+
+slPrice=
+engSetup.slPrice;
+
+tpPrice=
+engSetup.tpPrice;
+
+candleEpoch=
+engSetup.epoch;
+
+}
+
+else if(
+engSetup.type==='SELL'&&
+isTrendBearish
+){
+
+signalType='SELL';
+
+entryPrice=
+engSetup.entryPrice;
+
+slPrice=
+engSetup.slPrice;
+
+tpPrice=
+engSetup.tpPrice;
+
+candleEpoch=
+engSetup.epoch;
+
+}
+
+}
+
+if(
+signalType!=='NO SIGNAL'&&
+slPrice!==null&&
+tpPrice!==null&&
+engSetup&&
+engSetup.confirmed===true
+){
+
+addSignal(
+signalType,
+fmt(entryPrice),
+fmt(slPrice),
+fmt(tpPrice),
+candleEpoch
+);
+
+triggerAudioAlert(
+signalType
+);
+
+}
+
+$('rsi_val').textContent=
+fmt(rsiVal)+
+(
+rsiVal>=70
+?' (OVERBOUGHT)'
+:
+rsiVal<=30
+?' (OVERSOLD)'
+:' (NEUTRAL)'
+);
+
+$('rsi_val').className=
+'v '+
+(
+rsiVal>=70
+?'sell'
+:
+rsiVal<=30
+?'bull'
+:'wait'
+);
+
+$('atr_val').textContent=
+fmt(atrVal)+' ($)';
+
+$('atr_val').className=
+'v good';
+
+if(fvgInfo){
+
+$('fvg_val').textContent=
+fvgInfo.type+
+` (${fmt(fvgInfo.gapLow)}-${fmt(fvgInfo.gapHigh)})`;
+
+$('fvg_val').className=
+'v '+
+(
+fvgInfo.type==='BULLISH'
+?'bull'
+:'sell'
+);
+
+}else{
+
+$('fvg_val').textContent=
+'NO GAP';
+
+$('fvg_val').className=
+'v wait';
+
+}
+
+$('trend').textContent=
+mainTrend;
+
+$('trend').className=
+'v '+
+(
+isTrendBullish
+?'bull'
+:'sell'
+);
+
+if(engSetup){
+
+$('entry').textContent=
+engSetup.type+
+' DETECTED';
+
+$('entry').className=
+'v '+
+(
+engSetup.type==='BUY'
+?'bull'
+:'sell'
+);
+
+}else{
+
+$('entry').textContent=
+'NONE';
+
+$('entry').className=
+'v wait';
+
+}
+
+const rbsSbrStatusText=
+isRBS
+?'VALID RBS (R-BECOME-S)'
+:
+isSBR
+?'VALID SBR (S-BECOME-R)'
+:'NO BREAKOUT';
+
+$('rbs_sbr_status').textContent=
+rbsSbrStatusText;
+
+$('rbs_sbr_status').className=
+'v '+
+(
+isRBS||isSBR
+?'good'
+:'wait'
+);
+
+if(signalType!=='NO SIGNAL'){
+
+$('confidence').textContent=
+'CONFIRMED';
+
+$('confidence').className=
+'v good';
+
+}else{
+
+$('confidence').textContent=
+'—';
+
+$('confidence').className=
+'v wait';
+
+}
+
+const zones=
+getSnRAndSnD(candlesH1);
+
+$('snr').textContent=
+fmt(zones.support);
+
+$('keylevel').textContent=
+fmt(zones.resistance);
+
+$('rbs_zone_val').textContent=
+isRBS
+?'RBS: '+fmt(rbsSbrH1.rbsLevel)
+:
+isSBR
+?'SBR: '+fmt(rbsSbrH1.sbrLevel)
+:'—';
+
+$('vol').textContent=
+atrVal>2.5
+?'HIGH'
+:'MEDIUM';
+
+updateTradeSetupFromHistory();
+
+}
+
+/* =========================================================
+MANUAL ANALYZE
+========================================================= */
+
+function analyze(){
+
+enableAudioAndNotifications();
+
+initWebSocket();
+
+fetchHighImpactNews();
+
+}
+
+/* =========================================================
+START
+========================================================= */
+
+loadTradingViewChart('30');
+
+initWebSocket();
+
+fetchHighImpactNews();
+
+renderHistory();
+
+updateTradeSetupFromHistory();
+
+calcLot();
+
+setInterval(
+requestCandleData,
+15000
+);
+
+setInterval(
+fetchHighImpactNews,
+300000
+);
+
+</script>
+
+</body>
+</html>
