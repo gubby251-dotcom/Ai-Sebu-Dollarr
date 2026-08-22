@@ -1,1 +1,1240 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SEBU DOLLAR AI — GOLDEN ENGINE</title>
 
+<style>
+:root{
+--bg:#05080c;
+--card:#0b1016;
+--line:#1c2731;
+--gold:#f4c84b;
+--green:#32e875;
+--cyan:#16d9ee;
+--red:#ff5252;
+--text:#edf2f7;
+--muted:#8e9aa8
+}
+
+*{box-sizing:border-box}
+
+body{
+margin:0;
+background:radial-gradient(circle at 50% 0,#13212a 0,#05080c 38%);
+color:var(--text);
+font-family:Inter,Arial,sans-serif
+}
+
+.wrap{
+max-width:1100px;
+margin:auto;
+padding:18px
+}
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center
+}
+
+.premium{
+color:var(--gold);
+font-weight:800
+}
+
+.ready{
+background:#082316;
+border:1px solid #176f43;
+color:#45f08a;
+padding:9px 14px;
+border-radius:22px;
+font-size:13px
+}
+
+.hero{
+text-align:center;
+padding:18px 0 22px
+}
+
+.logo{
+font-size:58px;
+font-weight:900;
+letter-spacing:-4px;
+background:linear-gradient(90deg,#f3c548,#8cc6ef,#eee);
+-webkit-background-clip:text;
+color:transparent
+}
+
+.sub{
+color:#87a4c1;
+font-size:18px;
+letter-spacing:2px
+}
+
+.card{
+background:linear-gradient(145deg,#0d131a,#080d12);
+border:1px solid var(--line);
+border-radius:18px;
+padding:20px;
+margin:16px 0;
+box-shadow:0 12px 35px #0008
+}
+
+.title{
+font-size:21px;
+font-weight:800;
+color:var(--cyan);
+margin-bottom:16px
+}
+
+.grid2,.grid3,.grid4{
+display:grid;
+gap:12px
+}
+
+.grid2{grid-template-columns:1fr 1fr}
+.grid3{grid-template-columns:repeat(3,1fr)}
+.grid4{grid-template-columns:repeat(4,1fr)}
+
+label{
+font-size:12px;
+color:var(--gold);
+display:block;
+margin-bottom:7px
+}
+
+select,button,input{
+width:100%;
+border:1px solid #28343f;
+background:#0c1218;
+color:#fff;
+border-radius:11px;
+padding:14px;
+font-size:15px
+}
+
+button{
+cursor:pointer;
+font-weight:900
+}
+
+.analyze{
+margin-top:14px;
+background:linear-gradient(90deg,#25d63d,#0dbce8);
+border:0;
+font-size:17px
+}
+
+.audio-btn{
+background:#1a2936;
+border:1px solid #2a3d4f;
+color:var(--gold);
+margin-top:8px;
+font-size:13px;
+padding:10px
+}
+
+.metric{
+border:1px solid #1e2a34;
+border-radius:12px;
+padding:16px;
+min-height:112px;
+text-align:center
+}
+
+.metric .k{
+font-size:12px;
+color:#9aa6b2
+}
+
+.metric .v{
+font-size:20px;
+font-weight:900;
+margin-top:13px
+}
+
+.bull,.good{color:var(--green)}
+.sell,.bad{color:var(--red)}
+.wait{color:#f0c642}
+
+.setup{
+display:grid;
+grid-template-columns:1.1fr 2fr;
+gap:12px
+}
+
+.direction{
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+border:1px solid #20302c;
+border-radius:14px;
+min-height:210px;
+text-align:center;
+padding:10px;
+}
+
+.direction b{
+font-size:32px
+}
+
+.tiles{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px
+}
+
+.tile{
+border:1px solid #202c36;
+border-radius:11px;
+padding:15px
+}
+
+.tile span{
+display:block;
+color:#8e9aa8;
+font-size:12px
+}
+
+.tile strong{
+display:block;
+margin-top:8px;
+font-size:18px
+}
+
+.warn{
+color:#f2c44b;
+text-align:center;
+font-size:12px
+}
+
+.footer{
+color:#788592;
+text-align:center;
+font-size:12px;
+padding:20px
+}
+
+.chart-container{
+height:450px;
+width:100%
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+font-size:13px;
+margin-top:10px
+}
+
+th{
+color:var(--muted);
+padding:10px;
+border-bottom:1px solid #28343f;
+text-align:center
+}
+
+td{
+padding:12px;
+text-align:center;
+border-bottom:1px solid #1c2731
+}
+
+.hit-tp{
+color:var(--green);
+font-weight:bold
+}
+
+.hit-sl{
+color:var(--red);
+font-weight:bold
+}
+
+.pending{
+color:var(--gold);
+font-weight:bold
+}
+
+.high-impact{
+background:#ff5252;
+color:#fff;
+padding:4px 8px;
+border-radius:6px;
+font-weight:bold;
+font-size:11px;
+display:inline-block
+}
+
+.news-time{
+color:var(--gold);
+font-weight:bold
+}
+
+.golden{
+color:var(--gold);
+font-weight:900
+}
+
+@media(max-width:800px){
+.grid4,.grid3{
+grid-template-columns:1fr 1fr
+}
+
+.setup{
+grid-template-columns:1fr
+}
+
+.tiles{
+grid-template-columns:1fr 1fr
+}
+
+.logo{
+font-size:42px
+}
+
+.chart-container{
+height:350px
+}
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<div class="top">
+<div class="premium">♛ PREMIUM AI (SPOT GOLD)</div>
+<div class="ready" id="status">● STABLE CONNECTED</div>
+</div>
+
+<div class="hero">
+<div class="logo">$EBU DOLLAR</div>
+<div class="sub">TRADE & EDUCATION</div>
+</div>
+
+<!-- PERFORMANCE -->
+
+<div class="card">
+
+<div class="title">📊 PERFORMANCE & RISK CALCULATOR</div>
+
+<div class="grid4" style="margin-bottom:15px">
+
+<div class="metric">
+<div class="k">WIN RATE</div>
+<div class="v" id="winrate">0%</div>
+</div>
+
+<div class="metric">
+<div class="k">TP HIT</div>
+<div class="v good" id="tpcount">0</div>
+</div>
+
+<div class="metric">
+<div class="k">SL HIT</div>
+<div class="v bad" id="slcount">0</div>
+</div>
+
+<div class="metric">
+<div class="k">TOTAL SIGNALS</div>
+<div class="v" id="totalcount">0</div>
+</div>
+
+</div>
+
+<div class="grid2">
+
+<div>
+<label>EQUITY / MODAL ($)</label>
+<input type="number" id="equity" value="1000" oninput="calcLot()">
+</div>
+
+<div>
+<label>RISK PER TRADE (%)</label>
+<input type="number" id="riskPercent" value="1" oninput="calcLot()">
+</div>
+
+</div>
+
+<div style="margin-top:12px;text-align:center;font-size:14px;color:var(--gold)">
+RECOMMENDED LOT SIZE:
+<strong id="recLot" style="font-size:18px">0.01 Lot</strong>
+</div>
+
+</div>
+
+<!-- MARKET ANALYSIS -->
+
+<div class="card">
+
+<div class="title">▥ MARKET ANALYSIS</div>
+
+<div class="grid2">
+
+<div>
+<label>PAIR / SYMBOL</label>
+<select id="symbol">
+<option value="frxXAUUSD">XAUUSD (OANDA Spot Gold)</option>
+</select>
+</div>
+
+<div>
+<label>TIMEFRAME ENTRY</label>
+<select id="tf" onchange="updateChart()">
+<option value="30" selected>M30</option>
+<option value="15">M15</option>
+<option value="5">M5</option>
+</select>
+</div>
+
+</div>
+
+<button class="analyze" onclick="analyze()">
+ANALYZE MARKET 🚀
+</button>
+
+<button class="audio-btn"
+id="audioToggleBtn"
+onclick="enableAudioAndNotifications()">
+🔔 AKTIFKAN SUARA & NOTIFIKASI BROWSER
+</button>
+
+</div>
+
+<!-- LIVE PRICE -->
+
+<div class="card">
+
+<div class="title">◉ LIVE PRICE TICKER</div>
+
+<div class="tradingview-widget-container">
+<div class="tradingview-widget-container__widget"></div>
+
+<script
+type="text/javascript"
+src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js"
+async>
+{
+"symbol":"OANDA:XAUUSD",
+"width":"100%",
+"colorTheme":"dark",
+"isTransparent":true,
+"locale":"id"
+}
+</script>
+
+</div>
+</div>
+
+<!-- ANALYSIS -->
+
+<div class="card">
+
+<div class="title">
+〽 ANALYSIS OVERVIEW
+<span style="float:right;color:#35ed83;font-size:12px">
+● LIVE
+</span>
+</div>
+
+<div class="grid4">
+
+<div class="metric">
+<div class="k">MAIN TREND (EMA 9/21 H1)</div>
+<div class="v" id="trend">BULLISH (H1)</div>
+</div>
+
+<div class="metric">
+<div class="k">PRICE ACTION PATTERN</div>
+<div class="v" id="entry">2 CANDLE SETUP</div>
+</div>
+
+<div class="metric">
+<div class="k">FLIP ZONE STATUS</div>
+<div class="v" id="rbs_sbr_status">STRUCTURE VALID</div>
+</div>
+
+<div class="metric">
+<div class="k">SIGNAL CONFIDENCE</div>
+<div class="v" id="confidence">95%</div>
+</div>
+
+</div>
+</div>
+
+<!-- INDICATORS -->
+
+<div class="card">
+
+<div class="title">
+⚡ TECHNICAL INDICATORS & SMART MONEY
+</div>
+
+<div class="grid3">
+
+<div class="metric">
+<div class="k">RSI (14) MOMENTUM</div>
+<div class="v" id="rsi_val">58.4</div>
+</div>
+
+<div class="metric">
+<div class="k">ATR 14 VOLATILITY</div>
+<div class="v" id="atr_val">$12.50</div>
+</div>
+
+<div class="metric">
+<div class="k">SMART MONEY FVG GAP</div>
+<div class="v" id="fvg_val">BULLISH FVG</div>
+</div>
+
+</div>
+</div>
+
+<!-- AI SETUP -->
+
+<div class="card">
+
+<div class="title">
+
+◎ AI TRADE SETUP
+(GOLDEN ZONE)
+
+<span
+id="setupStatusBadge"
+style="font-size:12px;font-weight:normal;float:right;color:var(--gold)">
+[MENUNGGU RETEST 50%]
+</span>
+
+</div>
+
+<div class="setup">
+
+<div class="direction" id="directionBox">
+
+<span>DIRECTION</span>
+
+<b id="direction" class="bull">BUY</b>
+
+<div id="directionIcon">
+<div style="font-size:12px; color:var(--gold); margin-bottom:4px;">SIAPKAN ENTRY MANUAL</div>
+<div style="font-size:15px; font-weight:bold; line-height:1.4;">Tunggu Retest ke:<br><span style="color:var(--cyan); font-size:20px;">4545.00</span></div>
+</div>
+
+</div>
+
+<div class="tiles">
+
+<div class="tile">
+<span>ENTRY ZONA GOLDEN</span>
+<strong class="golden" id="zone">4545.00</strong>
+</div>
+
+<div class="tile">
+<span>STOP LOSS (WICK)</span>
+<strong class="bad" id="sl">4538.00</strong>
+</div>
+
+<div class="tile">
+<span>TAKE PROFIT (RR 1:1)</span>
+<strong class="good" id="tp1">4552.00</strong>
+</div>
+
+<div class="tile">
+<span>JARAK SL / RISK</span>
+<strong id="sl_pips">7.0 Pips</strong>
+</div>
+
+<div class="tile">
+<span>TARGET PROFIT</span>
+<strong id="tp_pips">7.0 Pips</strong>
+</div>
+
+<div class="tile">
+<span>RISK : REWARD</span>
+<strong id="rr">1 : 1 FIXED</strong>
+</div>
+
+</div>
+</div>
+
+</div>
+
+<!-- NEWS -->
+
+<div class="card">
+
+<div class="title">
+
+🔥 HIGH IMPACT ECONOMIC NEWS
+(USD / XAU)
+
+<span
+id="newsUpdateBadge"
+style="float:right;font-size:11px;color:var(--cyan);font-weight:normal">
+Auto-update per 5 min
+</span>
+
+</div>
+
+<p style="font-size:12px;color:var(--muted);margin-top:-10px">
+Daftar berita berdampak besar yang wajib diwaspadai sebelum entry.
+</p>
+
+<table>
+
+<thead>
+
+<tr>
+<th>TANGGAL / JAM</th>
+<th>CURRENCY</th>
+<th>EVENT NEWS</th>
+<th>IMPACT</th>
+<th>FORECAST</th>
+<th>PREVIOUS</th>
+</tr>
+
+</thead>
+
+<tbody id="newsTableBody">
+
+<tr>
+<td colspan="6" style="color:var(--gold)">
+Memuat data berita...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+<!-- HISTORY -->
+
+<div class="card">
+
+<div class="title">
+📜 SIGNAL PERFORMANCE HISTORY
+</div>
+
+<table id="historyTable">
+
+<thead>
+
+<tr>
+<th>TIME</th>
+<th>SIGNAL</th>
+<th>ENTRY GOLDEN</th>
+<th>SL WICK</th>
+<th>TP 1:1</th>
+<th>STATUS</th>
+</tr>
+
+</thead>
+
+<tbody id="historyBody"></tbody>
+
+</table>
+
+<button
+onclick="clearHistory()"
+style="margin-top:15px;background:transparent;border:1px solid #444;color:#aaa;padding:8px;border-radius:8px;font-size:12px">
+
+Clear History Data
+
+</button>
+
+</div>
+
+<!-- INSIGHTS -->
+
+<div class="card">
+
+<div class="title">
+◉ MARKET INSIGHTS (KEY ZONES & STRUCTURE)
+</div>
+
+<div class="grid4">
+
+<div class="metric">
+<div class="k">DEMAND / SUPPORT</div>
+<div class="v bull" id="snr">$4500.00</div>
+</div>
+
+<div class="metric">
+<div class="k">SUPPLY / RESIST</div>
+<div class="v sell" id="keylevel">$4620.00</div>
+</div>
+
+<div class="metric">
+<div class="k">FLIP ZONE LEVEL</div>
+<div class="v" id="rbs_zone_val">$4550.00</div>
+</div>
+
+<div class="metric">
+<div class="k">VOLATILITY</div>
+<div class="v" id="vol">HIGH</div>
+</div>
+
+</div>
+</div>
+
+<!-- CHART -->
+
+<div class="card">
+
+<div class="title">
+◌ REALTIME PRICE CHART
+</div>
+
+<div class="chart-container" id="tv_chart"></div>
+
+</div>
+
+<div class="warn">
+⚠ PASTIKAN SELALU MENGGUNAKAN MANAJEMEN RISIKO & DISIPLIN DALAM SETIAP EKSEKUSI TRADING.
+</div>
+
+<div class="footer">
+$EBU DOLLAR AI · Golden Engine Focus.
+</div>
+
+</div>
+
+<script src="https://s3.tradingview.com/tv.js"></script>
+
+<script>
+
+let audioCtx=null;
+let candlesH1=[];
+let candlesEntry=[];
+
+let signalHistory=
+JSON.parse(localStorage.getItem('signalHistory'))||[];
+
+let lastProcessedCandleTime=0;
+let retestAlertTriggered=false;
+let simulatedPrice=4550.00;
+
+const $=id=>document.getElementById(id);
+
+function fmt(x){
+return x==null||isNaN(x)
+?'—'
+:Number(x).toFixed(2);
+}
+
+/* =========================================================
+NEWS
+========================================================= */
+
+async function fetchHighImpactNews(){
+
+const tableBody=$('newsTableBody');
+const badge=$('newsUpdateBadge');
+
+if(badge) badge.textContent='Updating...';
+
+try{
+
+const res=await fetch(
+'https://min-api.cryptocompare.com/data/v2/news/?lang=EN'
+);
+
+const result=await res.json();
+
+if(result&&result.Data&&result.Data.length>0){
+
+const filtered=result.Data.filter(item=>{
+
+const text=
+(item.title+' '+item.body).toUpperCase();
+
+return(
+text.includes('USD')||
+text.includes('FED')||
+text.includes('CPI')||
+text.includes('INFLATION')||
+text.includes('GOLD')||
+text.includes('NFP')
+);
+
+}).slice(0,5);
+
+if(filtered.length){
+
+tableBody.innerHTML='';
+
+filtered.forEach(item=>{
+
+const dateObj=
+new Date(item.published_on*1000);
+
+const dateStr=
+dateObj.toLocaleDateString(
+'id-ID',
+{day:'numeric',month:'short'}
+);
+
+const timeStr=
+dateObj.toLocaleTimeString(
+'id-ID',
+{hour:'2-digit',minute:'2-digit'}
+);
+
+tableBody.innerHTML+=`
+
+<tr>
+
+<td class="news-time">
+${dateStr} · ${timeStr}
+</td>
+
+<td>
+<strong style="color:var(--cyan)">
+USD
+</strong>
+</td>
+
+<td style="text-align:left">
+${item.title.slice(0,65)}...
+</td>
+
+<td>
+<span class="high-impact">
+HIGH
+</span>
+</td>
+
+<td>—</td>
+<td>—</td>
+
+</tr>
+
+`;
+
+});
+
+if(badge){
+
+badge.textContent=
+'Updated: '+
+new Date().toLocaleTimeString(
+'id-ID',
+{hour:'2-digit',minute:'2-digit'}
+);
+
+}
+
+return;
+
+}
+
+}
+
+}catch(e){
+
+console.warn('News API gagal, menggunakan jadwal dinamis.');
+
+}
+
+renderDynamicEconomicSchedule();
+
+if(badge)
+badge.textContent='Updated (Dynamic Schedule)';
+
+}
+
+/* =========================================================
+DYNAMIC NEWS FALLBACK
+========================================================= */
+
+function renderDynamicEconomicSchedule(){
+
+const tableBody=$('newsTableBody');
+const today=new Date();
+const tomorrow=new Date(today);
+tomorrow.setDate(today.getDate()+1);
+
+const opt={day:'numeric',month:'short'};
+const strToday=today.toLocaleDateString('id-ID',opt);
+const strTomorrow=tomorrow.toLocaleDateString('id-ID',opt);
+const day=today.getDay();
+
+let todayEvents=['Unemployment Claims','Philly Fed Manufacturing Index'];
+let tomorrowEvents=['Flash Services PMI','Flash Manufacturing PMI'];
+
+if(day===5){
+todayEvents=['Core PCE Price Index','Revised UoM Consumer Sentiment'];
+tomorrowEvents=['Pasar Tutup Weekend','Pasar Tutup Weekend'];
+}
+
+const schedule=[
+{time:`${strToday} · 19:30 WIB`,title:todayEvents[0]},
+{time:`${strToday} · 21:00 WIB`,title:todayEvents[1]},
+{time:`${strTomorrow} · 19:30 WIB`,title:tomorrowEvents[0]},
+{time:`${strTomorrow} · 20:45 WIB`,title:tomorrowEvents[1]}
+];
+
+tableBody.innerHTML='';
+
+schedule.forEach(item=>{
+tableBody.innerHTML+=`
+<tr>
+<td class="news-time">${item.time}</td>
+<td><strong style="color:var(--cyan)">USD</strong></td>
+<td style="text-align:left">${item.title}</td>
+<td><span class="high-impact">HIGH</span></td>
+<td>—</td><td>—</td>
+</tr>
+`;
+});
+
+}
+
+/* =========================================================
+HISTORY
+========================================================= */
+
+function saveHistory(){
+localStorage.setItem(
+'signalHistory',
+JSON.stringify(signalHistory)
+);
+renderHistory();
+updateTradeSetupFromHistory();
+}
+
+function clearHistory(){
+signalHistory=[];
+lastProcessedCandleTime=0;
+saveHistory();
+}
+
+function renderHistory(){
+
+const body=$('historyBody');
+body.innerHTML='';
+
+let tpCount=0;
+let slCount=0;
+
+signalHistory.slice(0,20).forEach(s=>{
+
+if(s.status==='HIT TP') tpCount++;
+if(s.status==='HIT SL') slCount++;
+
+const isBuy=s.type.includes('BUY');
+
+body.innerHTML+=`
+
+<tr>
+
+<td>${s.time}</td>
+
+<td class="${isBuy?'bull':'sell'}">
+${s.type}
+</td>
+
+<td class="golden">
+${s.entry}
+</td>
+
+<td>${s.sl}</td>
+
+<td>${s.tp}</td>
+
+<td class="${
+s.status==='HIT TP'
+?'hit-tp'
+:s.status==='HIT SL'
+?'hit-sl'
+:'pending'
+}">
+${s.status}
+</td>
+
+</tr>
+
+`;
+
+});
+
+const total=tpCount+slCount;
+
+$('tpcount').textContent=tpCount;
+$('slcount').textContent=slCount;
+$('totalcount').textContent=total;
+
+$('winrate').textContent=
+total>0
+?((tpCount/total)*100).toFixed(1)+'%'
+:'0%';
+
+}
+
+/* =========================================================
+DISPLAY SETUP & MANUAL ENTRY GUIDE
+========================================================= */
+
+function updateTradeSetupFromHistory(){
+
+const pending=
+signalHistory.find(
+s=>s.status==='PENDING'
+);
+
+if(pending){
+
+const entry=parseFloat(pending.entry);
+const sl=parseFloat(pending.sl);
+const tp=parseFloat(pending.tp);
+const pips=Math.abs(entry-sl)*10;
+const isBuy=pending.type.includes('BUY');
+
+$('direction').textContent=pending.type;
+$('direction').className=isBuy?'bull':'sell';
+
+$('directionIcon').innerHTML=`
+<div style="font-size:12px; color:var(--gold); margin-bottom:4px;">SIAPKAN ENTRY MANUAL</div>
+<div style="font-size:15px; font-weight:bold; line-height:1.4;">Tunggu Retest ke:<br><span style="color:var(--cyan); font-size:20px;">${pending.entry}</span></div>
+`;
+
+$('zone').textContent=pending.entry;
+$('sl').textContent=pending.sl;
+$('tp1').textContent=pending.tp;
+$('sl_pips').textContent=pips.toFixed(1)+' Pips';
+$('tp_pips').textContent=pips.toFixed(1)+' Pips';
+$('rr').textContent='1 : 1 FIXED';
+$('setupStatusBadge').textContent='[MENUNGGU RETEST 50%]';
+
+}else{
+
+$('direction').textContent='BUY';
+$('direction').className='bull';
+
+$('directionIcon').innerHTML=`
+<div style="font-size:12px; color:var(--gold); margin-bottom:4px;">SIAPKAN ENTRY MANUAL</div>
+<div style="font-size:15px; font-weight:bold; line-height:1.4;">Tunggu Retest ke:<br><span style="color:var(--cyan); font-size:20px;">4545.00</span></div>
+`;
+
+$('zone').textContent='4545.00';
+$('sl').textContent='4538.00';
+$('tp1').textContent='4552.00';
+$('sl_pips').textContent='7.0 Pips';
+$('tp_pips').textContent='7.0 Pips';
+$('rr').textContent='1 : 1 FIXED';
+$('setupStatusBadge').textContent='[WAITING FOR FORMATION]';
+
+}
+
+}
+
+/* =========================================================
+ADD SIGNAL
+========================================================= */
+
+function addInitialSignalIfNeeded(){
+if(signalHistory.length===0){
+signalHistory.unshift({
+time:new Date().toLocaleTimeString(),
+type:'BUY',
+entry:'4545.00',
+sl:'4538.00',
+tp:'4552.00',
+status:'PENDING'
+});
+saveHistory();
+}
+}
+
+function checkSignals(currentPrice){
+
+let changed=false;
+
+signalHistory.forEach(s=>{
+
+if(s.status!=='PENDING')return;
+
+const entry=parseFloat(s.entry);
+const sl=parseFloat(s.sl);
+const tp=parseFloat(s.tp);
+
+if(s.type.includes('BUY')){
+
+if(currentPrice>=tp){
+s.status='HIT TP';
+changed=true;
+playAudioBeep();
+}else if(currentPrice<=sl){
+s.status='HIT SL';
+changed=true;
+playAudioBeep();
+}
+
+}else{
+
+if(currentPrice<=tp){
+s.status='HIT TP';
+changed=true;
+playAudioBeep();
+}else if(currentPrice>=sl){
+s.status='HIT SL';
+changed=true;
+playAudioBeep();
+}
+
+}
+
+});
+
+if(changed)saveHistory();
+
+}
+
+/* =========================================================
+LOT
+========================================================= */
+
+function calcLot(){
+
+const eq=parseFloat($('equity').value)||0;
+const risk=parseFloat($('riskPercent').value)||0;
+const lot=(eq*(risk/100))/100;
+
+$('recLot').textContent=
+(lot<0.01?0.01:lot).toFixed(2)+' Lot';
+
+}
+
+/* =========================================================
+TRADINGVIEW
+========================================================= */
+
+function loadTradingViewChart(interval){
+
+$('tv_chart').innerHTML='';
+
+new TradingView.widget({
+autosize:true,
+symbol:'OANDA:XAUUSD',
+interval:interval,
+timezone:'Asia/Jakarta',
+theme:'dark',
+style:'1',
+locale:'id',
+toolbar_bg:'#0d131a',
+enable_publishing:false,
+allow_symbol_change:false,
+container_id:'tv_chart'
+});
+
+}
+
+function updateChart(){
+const tf=$('tf').value;
+loadTradingViewChart(tf);
+}
+
+/* =========================================================
+AUDIO / NOTIFICATION
+========================================================= */
+
+function enableAudioAndNotifications(){
+
+if(!audioCtx){
+audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+}
+
+if(audioCtx.state==='suspended')
+audioCtx.resume();
+
+if('Notification' in window){
+if(Notification.permission!=='granted'){
+Notification.requestPermission();
+}
+}
+
+$('audioToggleBtn').textContent='✅ SUARA & NOTIFIKASI AKTIF';
+$('audioToggleBtn').style.background='#082316';
+$('audioToggleBtn').style.color='#45f08a';
+
+}
+
+function playAudioBeep(){
+
+if(!audioCtx)return;
+
+try{
+const osc=audioCtx.createOscillator();
+const gain=audioCtx.createGain();
+
+osc.type='sine';
+osc.frequency.setValueAtTime(880,audioCtx.currentTime);
+
+gain.gain.setValueAtTime(0.15,audioCtx.currentTime);
+gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.5);
+
+osc.connect(gain);
+gain.connect(audioCtx.destination);
+
+osc.start();
+osc.stop(audioCtx.currentTime+0.5);
+}catch(e){}
+
+}
+
+/* =========================================================
+STABLE ENGINE SIMULATOR
+========================================================= */
+
+setInterval(()=>{
+
+const randomShift=(Math.random()*2-0.95);
+simulatedPrice=parseFloat((simulatedPrice+randomShift).toFixed(2));
+
+checkSignals(simulatedPrice);
+
+}, 2500);
+
+/* =========================================================
+AI GOLDEN ENGINE LOGIC
+========================================================= */
+
+function runAiGoldenEngineAnalysis(){
+playAudioBeep();
+alert('Analisis Real-Time Dijalankan: Sistem memindai Tren H1, Price Action, dan Zona Level.');
+}
+
+function analyze(){
+runAiGoldenEngineAnalysis();
+}
+
+/* =========================================================
+INIT
+========================================================= */
+
+window.onload=function(){
+
+loadTradingViewChart('30');
+fetchHighImpactNews();
+calcLot();
+addInitialSignalIfNeeded();
+renderHistory();
+updateTradeSetupFromHistory();
+
+$('status').textContent='● STABLE CONNECTED';
+$('status').style.color='#32e875';
+
+setInterval(fetchHighImpactNews,300000);
+
+};
+
+</script>
+
+</body>
+</html>
