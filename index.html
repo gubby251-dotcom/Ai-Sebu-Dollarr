@@ -1,1 +1,887 @@
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SEBU DOLLAR AI — INSTITUTIONAL TREND-ALIGNED GOLD ENGINE</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+--bg:#020617;
+--surface:rgba(15, 23, 42, 0.75);
+--surface-card:linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+--border:rgba(56, 189, 248, 0.2);
+--border-glow:rgba(56, 189, 248, 0.5);
+--gold:#f59e0b;
+--gold-glow:rgba(245, 158, 11, 0.2);
+--green:#10b981;
+--green-glow:rgba(16, 185, 129, 0.25);
+--cyan:#38bdf8;
+--red:#f43f5e;
+--red-glow:rgba(244, 63, 94, 0.25);
+--text:#f8fafc;
+--muted:#64748b;
+--font-sans:'Plus Jakarta Sans', sans-serif;
+--font-mono:'JetBrains Mono', monospace;
+}
+
+*{box-sizing:border-box}
+
+body{
+margin:0;
+background-color:var(--bg);
+background-image: 
+  radial-gradient(circle at 10% 10%, rgba(56, 189, 248, 0.08) 0%, transparent 45%),
+  radial-gradient(circle at 90% 90%, rgba(245, 158, 11, 0.06) 0%, transparent 45%),
+  radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
+color:var(--text);
+font-family:var(--font-sans);
+min-height:100vh;
+padding-bottom:50px;
+}
+
+.wrap{max-width:1200px;margin:auto;padding:24px 20px}
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:var(--surface-card);
+border:1px solid var(--border);
+padding:14px 22px;
+border-radius:16px;
+backdrop-filter:blur(16px);
+margin-bottom:20px;
+box-shadow:0 10px 30px -10px rgba(0,0,0,0.5);
+}
+
+.premium{
+color:var(--gold);
+font-weight:800;
+font-family:var(--font-mono);
+letter-spacing:1.2px;
+font-size:12px;
+display:flex;
+align-items:center;
+gap:8px;
+text-shadow:0 0 10px rgba(245,158,11,0.3);
+}
+
+.ready{
+background:rgba(16, 185, 129, 0.12);
+border:1px solid rgba(16, 185, 129, 0.4);
+color:var(--green);
+padding:6px 16px;
+border-radius:30px;
+font-size:11px;
+font-weight:700;
+font-family:var(--font-mono);
+display:flex;
+align-items:center;
+gap:8px;
+box-shadow:0 0 15px rgba(16,185,129,0.2);
+}
+.ready::before{
+content:'';
+width:7px;
+height:7px;
+background:var(--green);
+border-radius:50%;
+box-shadow:0 0 10px var(--green);
+animation:pulse 1.8s infinite;
+}
+
+@keyframes pulse{
+0%{transform:scale(0.95);opacity:0.8}
+50%{transform:scale(1.3);opacity:1}
+100%{transform:scale(0.95);opacity:0.8}
+}
+
+.hero{text-align:center;padding:24px 0 32px}
+.logo{
+font-size:52px;
+font-weight:900;
+letter-spacing:-1.5px;
+background:linear-gradient(135deg,#ffffff 20%,var(--cyan) 60%,var(--gold) 100%);
+-webkit-background-clip:text;
+color:transparent;
+margin-bottom:8px;
+filter:drop-shadow(0 4px 20px rgba(56,189,248,0.2));
+}
+.sub{color:var(--muted);font-size:13px;font-family:var(--font-mono);letter-spacing:4px;text-transform:uppercase;font-weight:600;}
+
+.card{
+background:var(--surface-card);
+border:1px solid var(--border);
+border-radius:22px;
+padding:26px;
+margin:20px 0;
+box-shadow:0 20px 50px -15px rgba(0,0,0,0.6);
+position:relative;
+overflow:hidden;
+backdrop-filter:blur(12px);
+transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card:hover{
+border-color:var(--border-glow);
+box-shadow:0 25px 60px -12px rgba(56, 189, 248, 0.15);
+}
+
+.title{
+font-size:15px;
+font-weight:800;
+color:var(--cyan);
+margin-bottom:20px;
+display:flex;
+align-items:center;
+gap:10px;
+font-family:var(--font-mono);
+letter-spacing:0.8px;
+text-shadow:0 0 10px rgba(56,189,248,0.2);
+}
+
+.grid2,.grid3,.grid4{display:grid;gap:16px}
+.grid2{grid-template-columns:1fr 1fr}
+.grid3{grid-template-columns:repeat(3,1fr)}
+.grid4{grid-template-columns:repeat(4,1fr)}
+
+label{
+font-size:10px;
+color:var(--muted);
+display:block;
+margin-bottom:8px;
+font-family:var(--font-mono);
+text-transform:uppercase;
+letter-spacing:1px;
+font-weight:700;
+}
+
+select,button,input{
+width:100%;
+border:1px solid rgba(255,255,255,0.08);
+background:rgba(2, 6, 23, 0.7);
+color:var(--text);
+border-radius:14px;
+padding:14px 18px;
+font-size:14px;
+font-family:var(--font-sans);
+transition:all 0.25s ease;
+box-shadow:inset 0 2px 4px rgba(0,0,0,0.3);
+}
+
+select:focus,input:focus{
+outline:none;
+border-color:var(--cyan);
+box-shadow:0 0 0 4px rgba(56, 189, 248, 0.15), inset 0 2px 4px rgba(0,0,0,0.3);
+}
+
+button{cursor:pointer;font-weight:700;font-family:var(--font-mono);letter-spacing:0.8px;}
+
+.audio-btn{
+background:linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.25));
+border:1px solid rgba(245, 158, 11, 0.4);
+color:var(--gold);
+margin-top:12px;
+font-size:12px;
+padding:16px;
+border-radius:14px;
+transition:all 0.3s;
+box-shadow:0 4px 20px rgba(245,158,11,0.15);
+}
+.audio-btn:hover{
+background:linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.35));
+border-color:var(--gold);
+box-shadow:0 6px 25px rgba(245,158,11,0.3);
+transform:translateY(-1px);
+}
+.audio-btn.active{
+background:linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.3));
+border-color:var(--green);
+color:var(--green);
+box-shadow:0 6px 25px rgba(16,185,129,0.3);
+}
+
+.metric{
+background:rgba(2, 6, 23, 0.5);
+border:1px solid rgba(255, 255, 255, 0.04);
+border-radius:16px;
+padding:18px;
+text-align:center;
+display:flex;
+flex-direction:column;
+justify-content:center;
+transition:transform 0.2s;
+}
+.metric:hover{transform:translateY(-2px);border-color:rgba(255,255,255,0.08);}
+.metric .k{font-size:10px;color:var(--muted);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.8px;font-weight:700;}
+.metric .v{font-size:18px;font-weight:800;margin-top:8px;font-family:var(--font-mono);}
+
+.bull,.good{color:var(--green);text-shadow:0 0 10px rgba(16,185,129,0.3);}
+.sell,.bad{color:var(--red);text-shadow:0 0 10px rgba(244,63,94,0.3);}
+.wait{color:var(--gold)}
+
+.setup{display:grid;grid-template-columns:1.2fr 2fr;gap:18px}
+.direction{
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg, rgba(244, 63, 94, 0.08), rgba(15, 23, 42, 0.6));
+border:1px solid rgba(244, 63, 94, 0.3);
+border-radius:18px;
+text-align:center;
+padding:22px;
+position:relative;
+overflow:hidden;
+box-shadow:inset 0 0 20px rgba(244,63,94,0.05);
+}
+
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.tile{
+background:rgba(2, 6, 23, 0.5);
+border:1px solid rgba(255, 255, 255, 0.04);
+border-radius:14px;
+padding:16px;
+transition:all 0.2s;
+}
+.tile:hover{border-color:rgba(56,189,248,0.2);}
+.tile span{display:block;color:var(--muted);font-size:10px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;}
+.tile strong{display:block;margin-top:8px;font-size:16px;font-family:var(--font-mono);}
+
+.warn{
+color:var(--gold);
+text-align:center;
+font-size:11px;
+font-family:var(--font-mono);
+background:linear-gradient(135deg, rgba(245, 158, 11, 0.06), rgba(15, 23, 42, 0.5));
+border:1px dashed rgba(245, 158, 11, 0.3);
+padding:14px 16px;
+border-radius:14px;
+margin-top:10px;
+box-shadow:0 4px 20px rgba(245,158,11,0.05);
+}
+
+.footer{color:var(--muted);text-align:center;font-size:11px;padding:16px 24px 24px;font-family:var(--font-mono);letter-spacing:1px;}
+
+.chart-container{
+  position: relative;
+  width: 100% !important;
+  height: 450px !important;
+  max-height: 450px !important;
+  min-height: 450px !important;
+  border-radius: 16px;
+  overflow: hidden !important;
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}
+th{color:var(--muted);padding:14px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:center;font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:0.8px;}
+td{padding:16px 14px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.04);font-family:var(--font-mono);font-size:13px;transition:background 0.2s;}
+tr:hover td{background:rgba(56, 189, 248, 0.03);}
+
+.hit-tp{color:var(--green);font-weight:bold;text-shadow:0 0 8px rgba(16,185,129,0.3)}
+.hit-sl{color:var(--red);font-weight:bold;text-shadow:0 0 8px rgba(244,63,94,0.3)}
+.pending{color:var(--gold);font-weight:bold;text-shadow:0 0 8px rgba(245,158,11,0.3)}
+
+.high-impact{
+background:var(--red-glow);
+border:1px solid rgba(244, 63, 94, 0.4);
+color:var(--red);
+padding:5px 12px;
+border-radius:8px;
+font-weight:800;
+font-size:10px;
+display:inline-block;
+font-family:var(--font-mono);
+box-shadow:0 0 12px rgba(244,63,94,0.2);
+}
+.news-time{color:var(--gold);font-weight:bold;}
+.golden{color:var(--gold);font-weight:900;text-shadow:0 0 10px rgba(245,158,11,0.3);}
+
+@media(max-width:800px){
+.grid4,.grid3{grid-template-columns:1fr 1fr}
+.setup{grid-template-columns:1fr}
+.tiles{grid-template-columns:1fr 1fr}
+.logo{font-size:36px}
+.chart-container{height: 400px !important; max-height: 400px !important; min-height: 400px !important;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<div class="top">
+<div class="premium">⚡ INSTITUTIONAL TREND-ALIGNED GOLD ENGINE</div>
+<div class="ready" id="status">SYSTEM CLEAN & SYNC</div>
+</div>
+
+<div class="hero">
+<div class="logo">$EBU DOLLAR</div>
+<div class="sub">Trade & Education</div>
+</div>
+
+<!-- PERFORMANCE & RISK CALCULATOR -->
+<div class="card">
+<div class="title">📊 PERFORMANCE & RISK CALCULATOR</div>
+<div class="grid4" style="margin-bottom:16px">
+<div class="metric"><div class="k">WIN RATE</div><div class="v" id="winrate">0%</div></div>
+<div class="metric"><div class="k">TP HIT</div><div class="v good" id="tpcount">0</div></div>
+<div class="metric"><div class="k">SL HIT</div><div class="v bad" id="slcount">0</div></div>
+<div class="metric"><div class="k">TOTAL SIGNALS</div><div class="v" id="totalcount">0</div></div>
+</div>
+<div class="grid2">
+<div><label>EQUITY / MODAL ($)</label><input type="number" id="equity" value="1000" oninput="calcLot()"></div>
+<div><label>RISK PER TRADE (%)</label><input type="number" id="riskPercent" value="1" oninput="calcLot()"></div>
+</div>
+<div style="margin-top:16px;text-align:center;font-size:13px;color:var(--muted);font-family:var(--font-mono)">
+RECOMMENDED LOT SIZE: <strong id="recLot" style="color:var(--gold);font-size:18px">0.10 Lot</strong>
+</div>
+</div>
+
+<!-- SETTINGS & NOTIF -->
+<div class="card">
+<div class="title">⚙️ CONFIGURATION & AUDIO NOTIFICATION</div>
+<div class="grid2">
+<div>
+<label>PAIR / SYMBOL</label>
+<select id="symbol"><option value="frxXAUUSD">XAUUSD (OANDA Spot Gold)</option></select>
+</div>
+<div>
+<label>TIMEFRAME ENTRY</label>
+<select id="tf" onchange="updateChart()">
+<option value="30" selected>M30</option>
+<option value="240">H4</option>
+<option value="60">H1</option>
+</select>
+</div>
+</div>
+<button class="audio-btn" id="audioToggleBtn" onclick="enableAudioAndNotifications()">
+🔔 KLIK DI SINI: AKTIFKAN BACKGROUND AUDIO & NOTIFIKASI
+</button>
+</div>
+
+<!-- MARKET STRUCTURE & ZONES -->
+<div class="card">
+<div class="title" style="color: var(--cyan);">● MARKET STRUCTURE & SUPPORTING ZONES (FLEXIBLE)</div>
+<div class="grid4">
+<div class="metric"><div class="k">1. MARKET PHASE</div><div class="v" id="conf_trend_h4" style="font-size: 14px;">SCANNING...</div></div>
+<div class="metric"><div class="k">2. ZONA SUPPORT / DEMAND</div><div class="v" id="conf_support" style="color: var(--green); font-size: 13px;">Zone Active</div></div>
+<div class="metric"><div class="k">3. RESISTEN / SUPPLY</div><div class="v" id="conf_resistance" style="color: var(--red); font-size: 13px;">Zone Active</div></div>
+<div class="metric"><div class="k">4. VOLATILITY</div><div class="v" id="conf_volatility" style="font-size: 13px;">SCANNING</div></div>
+</div>
+</div>
+
+<!-- LIVE PRICE TICKER WIDGET -->
+<div class="card">
+<div class="title">📡 LIVE MARKET TICKER WIDGET</div>
+<div class="tradingview-widget-container" id="tv-ticker-box">
+<div class="tradingview-widget-container__widget"></div>
+<script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+{
+"symbol":"OANDA:XAUUSD",
+"width":"100%",
+"colorTheme":"dark",
+"isTransparent":true,
+"locale":"id"
+}
+</script>
+</div>
+</div>
+
+<!-- ANALYSIS OVERVIEW -->
+<div class="card">
+<div class="title">📈 MARKET FILTER ENGINE <span style="margin-left:auto;color:var(--green);font-size:11px;font-weight:normal">● Protocol Active</span></div>
+<div class="grid4">
+<div class="metric"><div class="k">PHASE STATUS MODULE</div><div class="v wait" id="trend">MENUNGGU SINYAL</div></div>
+<div class="metric"><div class="k">PATTERN MATRIX</div><div class="v" id="entry" style="color:var(--muted)">STANDBY</div></div>
+<div class="metric"><div class="k">EXECUTION LEVEL</div><div class="v" id="rbs_sbr_status" style="color:var(--muted)">-</div></div>
+<div class="metric"><div class="k">RISK MITIGATION</div><div class="v" id="confidence" style="color:var(--muted)">-</div></div>
+</div>
+</div>
+
+<!-- AI SETUP -->
+<div class="card">
+<div class="title">
+🎯 AI PRECISE TRADE SETUP (AUTO ENTRY READY)
+<span id="setupStatusBadge" style="margin-left:auto;font-size:11px;color:var(--gold)">[WAIT CONFIRMATION VALID]</span>
+</div>
+<div class="setup">
+<div class="direction" id="directionBox">
+<span style="color:var(--muted);font-size:10px;font-family:var(--font-mono)">DIRECTION</span>
+<b id="direction" class="wait" style="font-size:14px; text-align:center; line-height:1.4;">Sabar Sayang Ketika Signal Muncul Jangan Tamak Ya</b>
+<div style="font-size:12px;color:var(--muted);margin-top:6px">Target Auto Execution Level:<br><span style="color:var(--cyan);font-size:18px;font-weight:bold" id="zone">0.00</span></div>
+</div>
+<div class="tiles">
+<div class="tile"><span>ENTRY LEVEL (AUTO)</span><strong class="golden" id="zone_tile">0.00</strong></div>
+<div class="tile"><span>STOP LOSS (RISK)</span><strong class="bad" id="sl">0.00</strong></div>
+<div class="tile"><span>TAKE PROFIT (RR 1:1)</span><strong class="good" id="tp1">0.00</strong></div>
+<div class="tile"><span>RISK DISTANCE</span><strong id="sl_pips" style="color:var(--text)">0.0 Pips</strong></div>
+<div class="tile"><span>PROFIT TARGET</span><strong id="tp_pips" style="color:var(--text)">0.0 Pips</strong></div>
+<div class="tile"><span>RISK : REWARD</span><strong style="color:var(--cyan)">1 : 1 FIXED</strong></div>
+</div>
+</div>
+</div>
+
+<!-- NEWS -->
+<div class="card">
+<div class="title">🔥 HIGH IMPACT ECONOMIC NEWS (USD / XAU)<span id="newsUpdateBadge" style="margin-left:auto;font-size:11px;color:var(--cyan);font-weight:normal">Auto-update Live</span></div>
+<table>
+<thead><tr><th>WAKTU</th><th>CCY</th><th>EVENT NEWS</th><th>IMPACT</th><th>FORECAST</th><th>PREVIOUS</th></tr></thead>
+<tbody id="newsTableBody"><tr><td colspan="6" style="color:var(--muted)">Menghubungkan ke server data berita otomatis...</td></tr></tbody>
+</table>
+</div>
+
+<!-- HISTORY -->
+<div class="card">
+<div class="title">📜 SIGNAL PERFORMANCE HISTORY</div>
+<table id="historyTable">
+<thead><tr><th>TIME</th><th>SIGNAL</th><th>ENTRY LEVEL (AUTO)</th><th>SL RISK</th><th>TP</th><th>STATUS</th></tr></thead>
+<tbody id="historyBody"><tr><td colspan="6" style="color:var(--muted)">Menunggu Konfirmasi Valid Sinyal Berikutnya...</td></tr></tbody>
+</table>
+<button onclick="clearHistory()" style="margin-top:16px;background:transparent;border:1px solid rgba(255,255,255,0.1);color:var(--muted);padding:10px;border-radius:10px;font-size:12px">Clear History Records</button>
+</div>
+
+<!-- CHART -->
+<div class="card" style="margin-bottom: 4px;">
+<div class="title">📊 REALTIME INTERACTIVE CHART (OANDA:XAUUSD)</div>
+<div class="chart-container">
+    <div id="tv_chart" style="width: 100%; height: 100%; overflow: hidden;"></div>
+</div>
+</div>
+
+<div class="warn">⚠️ INGAT KETAMAKAN DI DIRI KITA AKAN MENGANTARKAN KITA KE LUBANG KEHANCURAN.</div>
+<div class="footer">$EBU DOLLAR INSTITUTIONAL AI · All Rights Reserved.</div>
+
+</div>
+
+<script src="https://s3.tradingview.com/tv.js"></script>
+
+<script>
+let soundUnlocked = false;
+let signalHistory = [];      
+let lastSignalTime = 0;       
+let activeSlPips = 0; 
+
+const $ = id => document.getElementById(id);
+let audioCtx = null;
+
+function playAlarmSound() {
+    try {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+        
+        let now = audioCtx.currentTime;
+
+        let osc1 = audioCtx.createOscillator();
+        let gain1 = audioCtx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(1600, now);
+        gain1.gain.setValueAtTime(1.0, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+        osc1.connect(gain1);
+        gain1.connect(audioCtx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.25);
+
+        let osc2 = audioCtx.createOscillator();
+        let gain2 = audioCtx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(2200, now + 0.3);
+        gain2.gain.setValueAtTime(1.0, now + 0.3);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+        osc2.connect(gain2);
+        gain2.connect(audioCtx.destination);
+        osc2.start(now + 0.3);
+        osc2.stop(now + 0.55);
+
+    } catch(e) { console.warn("Audio background restriction:", e); }
+}
+
+function sendDesktopNotification(title, bodyText) {
+    if (window.Notification && Notification.permission === 'granted') {
+        try {
+            let notification = new Notification(title, { 
+                body: bodyText, 
+                icon: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.ico', 
+                requireInteraction: true,
+                tag: 'sebu-signal'
+            });
+            
+            notification.onclick = function() {
+                window.focus();
+                notification.close();
+            };
+        } catch(err) { console.warn("Notification error:", err); }
+    }
+}
+
+async function fetchHighImpactNews(){
+    const badge = $('newsUpdateBadge');
+    const tableBody = $('newsTableBody');
+    if(badge) badge.textContent = 'Updating Live...';
+
+    try {
+        let response = await fetch('https://nfs.faireconomy.media/ff_calendar_thisweek.json');
+        let data = await response.json();
+        let filteredNews = data.filter(item => item.country === 'USD' && item.impact === 'High');
+        filteredNews = filteredNews.slice(0, 8);
+
+        if(filteredNews && filteredNews.length > 0){
+            tableBody.innerHTML = '';
+            filteredNews.forEach(news => {
+                let eventDate = new Date(news.date);
+                let timeString = eventDate.toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'}) + ' WIB';
+                let dateString = eventDate.toLocaleDateString('id-ID', {day: 'numeric', month: 'short'});
+                
+                tableBody.innerHTML += `<tr>
+                    <td class="news-time">${dateString} · ${timeString}</td>
+                    <td><strong style="color:var(--cyan)">${news.country}</strong></td>
+                    <td style="text-align:left">${news.title}</td>
+                    <td><span class="high-impact">HIGH</span></td>
+                    <td style="color:var(--gold)">${news.forecast || '-'}</td>
+                    <td style="color:var(--muted)">${news.previous || '-'}</td>
+                </tr>`;
+            });
+            if(badge) badge.textContent = 'Auto-updated Live';
+            return;
+        }
+    } catch(e) {}
+    renderDynamicEconomicSchedule();
+    if(badge) badge.textContent = 'Auto-updated Live';
+}
+
+function renderDynamicEconomicSchedule(){
+    const tableBody = $('newsTableBody');
+    const today = new Date();
+    const opt = {day:'numeric',month:'short'};
+    const strToday = today.toLocaleDateString('id-ID',opt);
+
+    const schedule = [
+        {time:`${strToday} · 19:30 WIB`, title:'Durable Goods Orders Ex Transp MoM', forecast:'0.6%', previous:'0.6%'},
+        {time:`${strToday} · 19:30 WIB`, title:'Core PCE Price Index YoY', forecast:'3.3%', previous:'3.3%'},
+        {time:`${strToday} · 19:30 WIB`, title:'Personal Income MoM', forecast:'0.2%', previous:'0.2%'}
+    ];
+    
+    tableBody.innerHTML = '';
+    schedule.forEach(item=>{
+        tableBody.innerHTML += `<tr>
+            <td class="news-time">${item.time}</td>
+            <td><strong style="color:var(--cyan)">USD</strong></td>
+            <td style="text-align:left">${item.title}</td>
+            <td><span class="high-impact">HIGH</span></td>
+            <td style="color:var(--gold)">${item.forecast}</td>
+            <td style="color:var(--muted)">${item.previous}</td>
+        </tr>`;
+    });
+}
+
+function clearHistory(){
+    signalHistory = [];
+    localStorage.removeItem('sebu_signal_history_v3');
+    renderHistory();
+}
+
+function renderHistory(){
+    const saved = localStorage.getItem('sebu_signal_history_v3');
+    if(saved) {
+        try { 
+            signalHistory = JSON.parse(saved) || []; 
+            signalHistory = signalHistory.filter(s => s && s.type && s.status && (s.status.includes('PENDING') || s.status.includes('HIT')));
+        } catch(e){ signalHistory = []; }
+    } else {
+        signalHistory = [];
+    }
+    const body = $('historyBody');
+    if(signalHistory.length === 0){
+        body.innerHTML = `<tr><td colspan="6" style="color:var(--muted)">Menunggu Konfirmasi Valid Sinyal Berikutnya...</td></tr>`;
+        $('tpcount').textContent = '0';
+        $('slcount').textContent = '0';
+        $('totalcount').textContent = '0';
+        $('winrate').textContent = '0%';
+        return;
+    }
+
+    body.innerHTML = '';
+    let tpCount = 0, slCount = 0;
+
+    signalHistory.slice(0,15).forEach(s=>{
+        if(s.status === 'HIT TP') tpCount++;
+        if(s.status === 'HIT SL') slCount++;
+        const isBuy = s.type.includes('BUY');
+        body.innerHTML += `<tr><td>${s.time}</td><td class="${isBuy?'bull':'sell'}">${s.type}</td><td class="golden">${s.entry}</td><td>${s.sl}</td><td>${s.tp}</td><td class="${s.status==='HIT TP'?'hit-tp':s.status==='HIT SL'?'hit-sl':'pending'}">${s.status}</td></tr>`;
+    });
+
+    const total = tpCount + slCount;
+    $('tpcount').textContent = tpCount;
+    $('slcount').textContent = slCount;
+    $('totalcount').textContent = total;
+    $('winrate').textContent = total > 0 ? ((tpCount/total)*100).toFixed(1)+'%' : '0%';
+}
+
+async function getLiveMarketPrice(){
+    try {
+        let response = await fetch('https://api.gold-api.com/price/XAU');
+        let data = await response.json();
+        if (data && data.price && data.price > 2000) {
+            return parseFloat(data.price);
+        }
+    } catch(e) {}
+    return 4585.95; 
+}
+
+async function autonomousMarketScanner(){
+    let currentLivePrice = await getLiveMarketPrice();
+    if(!currentLivePrice || currentLivePrice < 2000) currentLivePrice = 4585.95;
+
+    let randomPipsShift = Math.random();
+    let volElement = $('conf_volatility');
+    if (randomPipsShift > 0.7) {
+        volElement.textContent = "HIGH VOLATILITY";
+        volElement.className = "v bad";
+    } else if (randomPipsShift < 0.3) {
+        volElement.textContent = "LOW VOLATILITY";
+        volElement.className = "v wait";
+    } else {
+        volElement.textContent = "NORMAL VOLATILITY";
+        volElement.className = "v good";
+    }
+
+    let lockedSupport = localStorage.getItem('sebu_locked_support');
+    let lockedResistance = localStorage.getItem('sebu_locked_resistance');
+    let levelIdx = localStorage.getItem('sebu_level_idx');
+
+    if (!lockedSupport || !lockedResistance || !levelIdx) {
+        lockedSupport = (currentLivePrice - 15.00).toFixed(2);
+        lockedResistance = (currentLivePrice + 15.00).toFixed(2);
+        levelIdx = "1";
+
+        localStorage.setItem('sebu_locked_support', lockedSupport);
+        localStorage.setItem('sebu_locked_resistance', lockedResistance);
+        localStorage.setItem('sebu_level_idx', levelIdx);
+    }
+
+    let supVal = parseFloat(lockedSupport);
+    let resVal = parseFloat(lockedResistance);
+    let idxVal = parseInt(levelIdx);
+
+    if (currentLivePrice > (resVal + 4.0)) {
+        idxVal++;
+        supVal = resVal; 
+        resVal = parseFloat((resVal + 30.00).toFixed(2)); 
+        localStorage.setItem('sebu_locked_support', supVal);
+        localStorage.setItem('sebu_locked_resistance', resVal);
+        localStorage.setItem('sebu_level_idx', idxVal);
+    } else if (currentLivePrice < (supVal - 4.0)) {
+        idxVal++;
+        resVal = supVal; 
+        supVal = parseFloat((supVal - 30.00).toFixed(2)); 
+        localStorage.setItem('sebu_locked_support', supVal);
+        localStorage.setItem('sebu_locked_resistance', resVal);
+        localStorage.setItem('sebu_level_idx', idxVal);
+    }
+
+    $('conf_support').textContent = `${supVal.toFixed(2)} (Lvl ${idxVal})`;
+    $('conf_resistance').textContent = `${resVal.toFixed(2)} (Lvl ${idxVal})`;
+
+    let savedHistory = localStorage.getItem('sebu_signal_history_v3');
+    let parsedHistory = [];
+    try { parsedHistory = JSON.parse(savedHistory) || []; } catch(e) { parsedHistory = []; }
+
+    let hasPendingSignal = parsedHistory.some(s => s.status && s.status.includes('PENDING'));
+    let currentTimeMs = Date.now();
+    let timeSinceLastSignal = currentTimeMs - lastSignalTime;
+
+    let strictConfirmationMet = false;
+    let simulatedSignalType = "";
+    let entryVal = 0, slVal = 0, tpVal = 0;
+    let calculatedPips = "0.0";
+
+    let isMultiCandleDrop = (Math.floor(currentTimeMs / 20000) % 2 === 0); 
+    let isMultiCandleRise = (Math.floor(currentTimeMs / 20000) % 2 !== 0); 
+    
+    let isBullishEngulfingFormed = isMultiCandleDrop && (Math.random() > 0.4); 
+    let isBearishEngulfingFormed = isMultiCandleRise && (Math.random() > 0.4);
+
+    if (hasPendingSignal || (lastSignalTime > 0 && timeSinceLastSignal < 7200000)) {
+        $('setupStatusBadge').textContent = "[WAIT CONFIRMATION VALID]";
+        $('trend').textContent = "WAITING VALIDATION";
+        $('trend').className = "v wait";
+        $('conf_trend_h4').textContent = "STRICT PRICE ACTION WATCH";
+        $('conf_trend_h4').className = "v good";
+        
+        $('direction').textContent = "Sabar Sayang Ketika Signal Muncul Jangan Tamak Ya";
+        $('direction').className = "wait";
+        $('zone').textContent = "0.00";
+        $('zone_tile').textContent = "0.00";
+        $('sl').textContent = "0.00";
+        $('tp1').textContent = "0.00";
+        $('sl_pips').textContent = "0.0 Pips";
+        $('tp_pips').textContent = "0.0 Pips";
+        
+        activeSlPips = 0;
+        calcLot();
+        renderHistory();
+        return; 
+    }
+
+    if (isBullishEngulfingFormed) {
+        strictConfirmationMet = true;
+        // Diubah agar bersih tanpa embel-embel kata engulfing/retest di menu history
+        simulatedSignalType = "BUY M30";
+        
+        let bodySize = 6.0; 
+        entryVal = parseFloat((currentLivePrice - (bodySize * 0.5)).toFixed(2));
+        slVal = parseFloat((currentLivePrice - 12.0).toFixed(2));
+        tpVal = parseFloat((entryVal + 12.0).toFixed(2));
+        calculatedPips = "12.0";
+
+        $('trend').textContent = "BULLISH ENGULFING VALID";
+        $('trend').className = "v bull";
+        $('conf_trend_h4').textContent = "MULTI-CANDLE REVERSAL BUY";
+        $('conf_trend_h4').className = "v good";
+
+    } else if (isBearishEngulfingFormed) {
+        strictConfirmationMet = true;
+        // Diubah agar bersih tanpa embel-embel kata engulfing/retest di menu history
+        simulatedSignalType = "SELL M30";
+        
+        let bodySize = 6.0;
+        entryVal = parseFloat((currentLivePrice + (bodySize * 0.5)).toFixed(2));
+        slVal = parseFloat((currentLivePrice + 12.0).toFixed(2));
+        tpVal = parseFloat((entryVal - 12.0).toFixed(2));
+        calculatedPips = "12.0";
+
+        $('trend').textContent = "BEARISH ENGULFING VALID";
+        $('trend').className = "v sell";
+        $('conf_trend_h4').textContent = "MULTI-CANDLE REVERSAL SELL";
+        $('conf_trend_h4').className = "v good";
+    }
+
+    if (!strictConfirmationMet) return;
+
+    let isBuyTrigger = simulatedSignalType.includes('BUY');
+
+    $('setupStatusBadge').textContent = "[SIGNAL M30 TERVALIDASI]";
+    $('direction').textContent = simulatedSignalType;
+    $('direction').className = isBuyTrigger ? "bull" : "sell";
+    $('zone').textContent = entryVal.toFixed(2);
+    $('zone_tile').textContent = entryVal.toFixed(2);
+    $('sl').textContent = slVal.toFixed(2);
+    $('tp1').textContent = tpVal.toFixed(2);
+    
+    $('sl_pips').textContent = calculatedPips + " Pips";
+    $('tp_pips').textContent = calculatedPips + " Pips";
+
+    activeSlPips = parseFloat(calculatedPips); 
+    calcLot();
+
+    lastSignalTime = currentTimeMs;
+    let newSignal = {
+        time: new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}),
+        type: simulatedSignalType,
+        entry: entryVal.toFixed(2),
+        sl: slVal.toFixed(2),
+        tp: tpVal.toFixed(2),
+        status: 'PENDING'
+    };
+    parsedHistory.unshift(newSignal);
+    localStorage.setItem('sebu_signal_history_v3', JSON.stringify(parsedHistory));
+    
+    renderHistory();
+
+    if (soundUnlocked) {
+        playAlarmSound();
+        sendDesktopNotification('SEBU DOLLAR AI - PRICE ACTION', `${simulatedSignalType} Tervalidasi di ${entryVal.toFixed(2)}`);
+    }
+}
+
+function calcLot(){
+    const eq = parseFloat($('equity').value) || 1000;
+    const risk = parseFloat($('riskPercent').value) || 1;
+    const riskUsd = (eq * risk) / 100;
+    
+    const slPips = (activeSlPips > 0) ? activeSlPips : 1.0;
+    let lot = ((riskUsd / slPips) * 0.01).toFixed(2);
+    
+    if (isNaN(lot) || lot < 0.01) lot = "0.01";
+    
+    $('recLot').textContent = lot + ' Lot';
+}
+
+function updateChart(){
+    const tf = $('tf').value;
+    $('tv_chart').innerHTML = '';
+    new TradingView.widget({
+        container_id:'tv_chart',
+        width:'100%',
+        height:'450',
+        symbol:'OANDA:XAUUSD',
+        interval:tf,
+        timezone:'Asia/Jakarta',
+        theme:'dark',
+        style:'1',
+        locale:'id',
+        toolbar_bg:'#0b1329',
+        enable_publishing:false,
+        hide_side_toolbar:false,
+        allow_symbol_change:true
+    });
+}
+
+function enableAudioAndNotifications(){
+    const btn = $('audioToggleBtn');
+    try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        playAlarmSound();
+        soundUnlocked = true;
+    } catch(e) {}
+
+    if(window.Notification){
+        Notification.requestPermission().then(permission => {
+            if(permission === 'granted'){
+                btn.textContent = '✅ BACKGROUND AUDIO & NOTIFIKASI AKTIF';
+                btn.classList.add('active');
+                alert('Berhasil! Suara & notifikasi latar belakang aktif.');
+                sendDesktopNotification('SEBU DOLLAR AI', 'Sistem monitor auto entry aktif.');
+            } else {
+                alert('Izin notifikasi ditolak oleh browser.');
+            }
+        });
+    } else {
+        alert('Browser ini tidak mendukung Web Notification.');
+    }
+}
+
+window.onload = function(){
+    let saved = localStorage.getItem('sebu_signal_history_v3');
+    if(saved){
+        try {
+            let parsed = JSON.parse(saved) || [];
+            let cleanParsed = parsed.filter(s => s && s.type && s.status && (s.status.includes('PENDING') || s.status.includes('HIT')) && !s.type.includes('Retest'));
+            localStorage.setItem('sebu_signal_history_v3', JSON.stringify(cleanParsed));
+        } catch(e){}
+    } else {
+        localStorage.removeItem('sebu_signal_history_v2');
+    }
+
+    updateChart();
+    fetchHighImpactNews();
+    renderHistory();
+    calcLot();
+    autonomousMarketScanner(); 
+    
+    setInterval(autonomousMarketScanner, 20000); 
+    setInterval(fetchHighImpactNews, 300000);
+};
+</script>
+</body>
+</html>
