@@ -1,1 +1,1443 @@
+<script>
+let soundUnlocked = false;
+let signalHistory = [];
+let activeSlPips = 0;
 
+const $ = id => document.getElementById(id);
+let audioCtx = null;
+
+/* =========================================================
+   SEBU DOLLAR AI
+   4-RULE SIGNAL ENGINE
+   =========================================================
+   RULE 1 : MARKET HARUS BERGERAK DENGAN BEBERAPA CANDLE
+            MINIMAL 2 CANDLE SEARAH SEBELUM ENGULFING
+
+   RULE 2 : CANDLE KEDUA HARUS MENJADI ENGULFING DAN SUDAH
+            CLOSE
+
+   RULE 3 : ENTRY = 50% BODY CANDLE KEDUA / ENGULFING
+
+   RULE 4 : SL = WICK EXTREME ANTARA CANDLE PERTAMA DAN
+            CANDLE KEDUA ENGULFING
+
+   BUY:
+   bearish candles -> bearish C1 -> bullish engulfing C2 close
+   -> entry 50% body C2 -> SL low terendah C1/C2
+
+   SELL:
+   bullish candles -> bullish C1 -> bearish engulfing C2 close
+   -> entry 50% body C2 -> SL high tertinggi C1/C2
+   ========================================================= */
+
+let lastProcessedCandleTime = null;
+let lastSignalKey = null;
+let scannerBusy = false;
+
+/* =========================================================
+   AUDIO
+   ========================================================= */
+
+function playAlarmSound() {
+    try {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+
+        let now = audioCtx.currentTime;
+
+        let osc1 = audioCtx.createOscillator();
+        let gain1 = audioCtx.createGain();
+
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(1600, now);
+        gain1.gain.setValueAtTime(1.0, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+        osc1.connect(gain1);
+        gain1.connect(audioCtx.destination);
+
+        osc1.start(now);
+        osc1.stop(now + 0.25);
+
+        let osc2 = audioCtx.createOscillator();
+        let gain2 = audioCtx.createGain();
+
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(2200, now + 0.3);
+        gain2.gain.setValueAtTime(1.0, now + 0.3);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+
+        osc2.connect(gain2);
+        gain2.connect(audioCtx.destination);
+
+        osc2.start(now + 0.3);
+        osc2.stop(now + 0.55);
+
+    } catch(e) {
+        console.warn("Audio background restriction:", e);
+    }
+}
+
+function sendDesktopNotification(title, bodyText) {
+    if (window.Notification && Notification.permission === 'granted') {
+        try {
+            let notification = new Notification(title, {
+                body: bodyText,
+                icon: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.ico',
+                requireInteraction: true,
+                tag: 'sebu-dollar-notification'
+            });
+
+            notification.onclick = function() {
+                window.focus();
+                notification.close();
+            };
+
+        } catch(err) {
+            console.warn("Notification error:", err);
+        }
+    }
+}
+
+/* =========================================================
+   NEWS
+   ========================================================= */
+
+async function fetchHighImpactNews(){
+
+    const badge = $('newsUpdateBadge');
+    const tableBody = $('newsTableBody');
+
+    if(badge) badge.textContent = 'Updating Live...';
+
+    try {
+
+        let response = await fetch(
+            'https://nfs.faireconomy.media/ff_calendar_thisweek.json'
+        );
+
+        let data = await response.json();
+
+        let filteredNews = data.filter(item =>
+            item.country === 'USD' &&
+            item.impact === 'High'
+        );
+
+        filteredNews = filteredNews.slice(0, 8);
+
+        if(filteredNews && filteredNews.length > 0){
+
+            tableBody.innerHTML = '';
+
+            filteredNews.forEach(news => {
+
+                let eventDate = new Date(news.date);
+
+                let timeString =
+                    eventDate.toLocaleTimeString(
+                        'id-ID',
+                        {
+                            hour:'2-digit',
+                            minute:'2-digit'
+                        }
+                    ) + ' WIB';
+
+                let dateString =
+                    eventDate.toLocaleDateString(
+                        'id-ID',
+                        {
+                            day:'numeric',
+                            month:'short'
+                        }
+                    );
+
+                tableBody.innerHTML += `
+                <tr>
+                    <td class="news-time">
+                        ${dateString} · ${timeString}
+                    </td>
+
+                    <td>
+                        <strong style="color:var(--cyan)">
+                            ${news.country}
+                        </strong>
+                    </td>
+
+                    <td style="text-align:left">
+                        ${news.title}
+                    </td>
+
+                    <td>
+                        <span class="high-impact">HIGH</span>
+                    </td>
+
+                    <td style="color:var(--gold)">
+                        ${news.forecast || '-'}
+                    </td>
+
+                    <td style="color:var(--muted)">
+                        ${news.previous || '-'}
+                    </td>
+                </tr>`;
+            });
+
+            if(badge) badge.textContent = 'Auto-updated Live';
+            return;
+        }
+
+    } catch(e) {
+        console.warn("News API error:", e);
+    }
+
+    renderDynamicEconomicSchedule();
+
+    if(badge) badge.textContent = 'Auto-updated Live';
+}
+
+function renderDynamicEconomicSchedule(){
+
+    const tableBody = $('newsTableBody');
+
+    const today = new Date();
+
+    const opt = {
+        day:'numeric',
+        month:'short'
+    };
+
+    const strToday =
+        today.toLocaleDateString('id-ID',opt);
+
+    const schedule = [
+
+        {
+            time:`${strToday} · 19:30 WIB`,
+            title:'Durable Goods Orders Ex Transp MoM',
+            forecast:'0.6%',
+            previous:'0.6%'
+        },
+
+        {
+            time:`${strToday} · 19:30 WIB`,
+            title:'Core PCE Price Index YoY',
+            forecast:'3.3%',
+            previous:'3.3%'
+        },
+
+        {
+            time:`${strToday} · 19:30 WIB`,
+            title:'Personal Income MoM',
+            forecast:'0.2%',
+            previous:'0.2%'
+        }
+
+    ];
+
+    tableBody.innerHTML = '';
+
+    schedule.forEach(item => {
+
+        tableBody.innerHTML += `
+        <tr>
+
+            <td class="news-time">
+                ${item.time}
+            </td>
+
+            <td>
+                <strong style="color:var(--cyan)">
+                    USD
+                </strong>
+            </td>
+
+            <td style="text-align:left">
+                ${item.title}
+            </td>
+
+            <td>
+                <span class="high-impact">
+                    HIGH
+                </span>
+            </td>
+
+            <td style="color:var(--gold)">
+                ${item.forecast}
+            </td>
+
+            <td style="color:var(--muted)">
+                ${item.previous}
+            </td>
+
+        </tr>`;
+    });
+}
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+function clearHistory(){
+
+    signalHistory = [];
+
+    localStorage.removeItem(
+        'sebu_signal_history_v7'
+    );
+
+    renderHistory();
+
+    resetAiSetupDisplay();
+
+    lastSignalKey = null;
+    lastProcessedCandleTime = null;
+}
+
+function resetAiSetupDisplay(){
+
+    $('setupStatusBadge').textContent =
+        "[MENUNGGU 4 SYARAT STRUKTUR]";
+
+    $('setupStatusBadge').style.color =
+        "var(--gold)";
+
+    $('trend').textContent =
+        "MENUNGGU KONFIRMASI STRUKTUR";
+
+    $('trend').className =
+        "v wait";
+
+    $('rule_trend').textContent =
+        "MENUNGGU STRUKTUR";
+
+    $('rule_trend').style.color =
+        "var(--text)";
+
+    $('rule_engulf').textContent =
+        "MENUNGGU CLOSE";
+
+    $('rule_engulf').style.color =
+        "var(--gold)";
+
+    $('rule_entry').textContent =
+        "STANDBY";
+
+    $('rule_entry').style.color =
+        "var(--cyan)";
+
+    $('rule_sl').textContent =
+        "TERKUNCI";
+
+    $('rule_sl').style.color =
+        "var(--text)";
+
+    $('direction').textContent =
+        "Sabar Sayang Ketika Signal Muncul Jangan Tamak Ya";
+
+    $('direction').className =
+        "wait";
+
+    $('zone').textContent =
+        "0.00";
+
+    $('zone_tile').textContent =
+        "0.00";
+
+    $('sl').textContent =
+        "0.00";
+
+    $('tp1').textContent =
+        "0.00";
+
+    $('sl_pips').textContent =
+        "0.0 Pips";
+
+    $('tp_pips').textContent =
+        "0.0 Pips";
+
+    activeSlPips = 0;
+
+    calcLot();
+}
+
+function renderHistory(){
+
+    const body = $('historyBody');
+
+    body.innerHTML = `
+    <tr>
+        <td colspan="6"
+            style="color:var(--muted)">
+            Menunggu Konfirmasi 4 Syarat Struktur Pasar...
+        </td>
+    </tr>`;
+
+    $('tpcount').textContent = '0';
+    $('slcount').textContent = '0';
+    $('totalcount').textContent = '0';
+    $('winrate').textContent = '0%';
+}
+
+/* =========================================================
+   LIVE MARKET PRICE
+   ========================================================= */
+
+async function getLiveMarketPrice(){
+
+    try {
+
+        let response =
+            await fetch(
+                'https://api.gold-api.com/price/XAU',
+                {
+                    cache:'no-store'
+                }
+            );
+
+        let data =
+            await response.json();
+
+        if(
+            data &&
+            data.price &&
+            data.price > 0
+        ){
+            return parseFloat(data.price);
+        }
+
+    } catch(e) {
+        console.warn(
+            "Gold price API error:",
+            e
+        );
+    }
+
+    return null;
+}
+
+/* =========================================================
+   TIMEFRAME
+   ========================================================= */
+
+function getYahooInterval(){
+
+    const tf = $('tf').value;
+
+    /*
+       TradingView:
+       30  = M30
+       60  = H1
+       240 = H4
+
+       Yahoo tidak selalu menyediakan 4H.
+       Untuk H4 kita ambil H1 lalu agregasi menjadi H4.
+    */
+
+    if(tf === '60'){
+        return '60m';
+    }
+
+    if(tf === '240'){
+        return '60m';
+    }
+
+    return '30m';
+}
+
+/* =========================================================
+   GET REAL XAUUSD CANDLES
+   ========================================================= */
+
+async function getRealXAUUSDCandles(){
+
+    try {
+
+        const interval =
+            getYahooInterval();
+
+        let range = '5d';
+
+        if(interval === '30m'){
+            range = '5d';
+        }
+
+        if(interval === '60m'){
+            range = '10d';
+        }
+
+        const url =
+            'https://query1.finance.yahoo.com/v8/finance/chart/XAUUSD=X' +
+            '?interval=' + interval +
+            '&range=' + range +
+            '&events=history' +
+            '&includeAdjustedClose=true';
+
+        const response =
+            await fetch(
+                url,
+                {
+                    cache:'no-store'
+                }
+            );
+
+        if(!response.ok){
+            throw new Error(
+                'Yahoo HTTP ' +
+                response.status
+            );
+        }
+
+        const json =
+            await response.json();
+
+        if(
+            !json ||
+            !json.chart ||
+            !json.chart.result ||
+            !json.chart.result[0]
+        ){
+            throw new Error(
+                'Data candle XAUUSD tidak tersedia'
+            );
+        }
+
+        const result =
+            json.chart.result[0];
+
+        const timestamps =
+            result.timestamp || [];
+
+        const quote =
+            result.indicators &&
+            result.indicators.quote &&
+            result.indicators.quote[0];
+
+        if(!quote){
+            throw new Error(
+                'OHLC candle tidak tersedia'
+            );
+        }
+
+        let candles = [];
+
+        for(
+            let i = 0;
+            i < timestamps.length;
+            i++
+        ){
+
+            const open =
+                quote.open[i];
+
+            const high =
+                quote.high[i];
+
+            const low =
+                quote.low[i];
+
+            const close =
+                quote.close[i];
+
+            if(
+                open == null ||
+                high == null ||
+                low == null ||
+                close == null
+            ){
+                continue;
+            }
+
+            candles.push({
+                time: timestamps[i] * 1000,
+                open: Number(open),
+                high: Number(high),
+                low: Number(low),
+                close: Number(close)
+            });
+        }
+
+        if(
+            $('tf').value === '240'
+        ){
+            candles =
+                aggregateH1ToH4(candles);
+        }
+
+        return candles;
+
+    } catch(e) {
+
+        console.warn(
+            "Real candle API error:",
+            e
+        );
+
+        return [];
+    }
+}
+
+/* =========================================================
+   AGGREGATE H1 -> H4
+   ========================================================= */
+
+function aggregateH1ToH4(candles){
+
+    if(!candles || candles.length === 0){
+        return [];
+    }
+
+    const groups = {};
+
+    candles.forEach(c => {
+
+        const d =
+            new Date(c.time);
+
+        /*
+           UTC block 4 jam.
+           Dibuat konsisten supaya candle
+           tidak berubah-ubah.
+        */
+
+        const hour =
+            d.getUTCHours();
+
+        const blockHour =
+            Math.floor(hour / 4) * 4;
+
+        const key =
+            Date.UTC(
+                d.getUTCFullYear(),
+                d.getUTCMonth(),
+                d.getUTCDate(),
+                blockHour,
+                0,
+                0
+            );
+
+        if(!groups[key]){
+            groups[key] = [];
+        }
+
+        groups[key].push(c);
+    });
+
+    const output = [];
+
+    Object.keys(groups)
+        .sort((a,b) => Number(a)-Number(b))
+        .forEach(key => {
+
+            const arr =
+                groups[key]
+                    .sort(
+                        (a,b) =>
+                        a.time - b.time
+                    );
+
+            if(arr.length < 4){
+                return;
+            }
+
+            const first =
+                arr[0];
+
+            const last =
+                arr[arr.length - 1];
+
+            output.push({
+
+                time:Number(key),
+
+                open:first.open,
+
+                high:Math.max(
+                    ...arr.map(c => c.high)
+                ),
+
+                low:Math.min(
+                    ...arr.map(c => c.low)
+                ),
+
+                close:last.close
+
+            });
+        });
+
+    return output;
+}
+
+/* =========================================================
+   CHECK CANDLE CLOSED
+   ========================================================= */
+
+function getClosedCandles(candles){
+
+    if(!candles || candles.length < 6){
+        return [];
+    }
+
+    /*
+       Candle terakhir dari API adalah candle
+       yang sedang berjalan.
+
+       Candle tersebut TIDAK boleh dipakai
+       sebagai candle engulfing.
+
+       Maka candle terakhir dibuang.
+    */
+
+    return candles.slice(
+        0,
+        candles.length - 1
+    );
+}
+
+/* =========================================================
+   BODY ENGULFING
+   ========================================================= */
+
+function isBullishCandle(c){
+    return c.close > c.open;
+}
+
+function isBearishCandle(c){
+    return c.close < c.open;
+}
+
+function bodyHigh(c){
+    return Math.max(
+        c.open,
+        c.close
+    );
+}
+
+function bodyLow(c){
+    return Math.min(
+        c.open,
+        c.close
+    );
+}
+
+/* =========================================================
+   4-RULE VALIDATION ENGINE
+   ========================================================= */
+
+function evaluateFourRules(candles){
+
+    if(
+        !candles ||
+        candles.length < 6
+    ){
+        return null;
+    }
+
+    /*
+       Struktur:
+
+       C4 = candle bearish/bullish sebelumnya
+       C3 = candle bearish/bullish sebelumnya
+       C1 = candle pertama engulfing
+       C2 = candle kedua engulfing
+
+       Kita menggunakan:
+       minimal 2 candle searah sebelum C1.
+    */
+
+    const len =
+        candles.length;
+
+    const c2 =
+        candles[len - 1];
+
+    const c1 =
+        candles[len - 2];
+
+    const c3 =
+        candles[len - 3];
+
+    const c4 =
+        candles[len - 4];
+
+    /* =====================================================
+       RULE 1
+       MARKET TURUN DENGAN BEBERAPA CANDLE
+       ATAU MARKET NAIK DENGAN BEBERAPA CANDLE
+       ===================================================== */
+
+    const previousDown =
+        isBearishCandle(c3) &&
+        isBearishCandle(c4);
+
+    const previousUp =
+        isBullishCandle(c3) &&
+        isBullishCandle(c4);
+
+    /*
+       Penting:
+       Jika hanya 1 candle turun/naik,
+       maka TIDAK VALID.
+    */
+
+    /* =====================================================
+       RULE 2
+       ENGULFING CANDLE KEDUA SUDAH CLOSE
+       ===================================================== */
+
+    const bullishEngulfing =
+        previousDown &&
+        isBearishCandle(c1) &&
+        isBullishCandle(c2) &&
+
+        /*
+           Body C2 harus menelan seluruh
+           body C1.
+        */
+
+        bodyLow(c2) <= bodyLow(c1) &&
+        bodyHigh(c2) >= bodyHigh(c1);
+
+    const bearishEngulfing =
+        previousUp &&
+        isBullishCandle(c1) &&
+        isBearishCandle(c2) &&
+
+        /*
+           Body C2 harus menelan seluruh
+           body C1.
+        */
+
+        bodyHigh(c2) >= bodyHigh(c1) &&
+        bodyLow(c2) <= bodyLow(c1);
+
+    /* =====================================================
+       BUY
+       ===================================================== */
+
+    if(bullishEngulfing){
+
+        /*
+           RULE 3:
+           ENTRY 50% DARI BODY CANDLE KEDUA
+           / CANDLE ENGULFING
+        */
+
+        const bodySize =
+            Math.abs(
+                c2.close -
+                c2.open
+            );
+
+        const entryLevel =
+            Math.min(
+                c2.open,
+                c2.close
+            ) +
+            (
+                bodySize * 0.5
+            );
+
+        /*
+           RULE 4:
+           SL = WICK PALING RENDAH
+           ANTARA C1 DAN C2
+        */
+
+        const stopLoss =
+            Math.min(
+                c1.low,
+                c2.low
+            );
+
+        const riskDistance =
+            Math.abs(
+                entryLevel -
+                stopLoss
+            );
+
+        if(
+            !isFinite(entryLevel) ||
+            !isFinite(stopLoss) ||
+            riskDistance <= 0
+        ){
+            return null;
+        }
+
+        return {
+
+            type:'BUY',
+
+            candleTime:c2.time,
+
+            trendText:
+                '✅ MULTI-CANDLE DOWN VALID',
+
+            engulfText:
+                '✅ BULLISH ENGULFING CLOSE',
+
+            entry:entryLevel,
+
+            sl:stopLoss,
+
+            tp:
+                entryLevel +
+                riskDistance,
+
+            riskDistance:riskDistance,
+
+            pips:
+                (riskDistance * 10)
+                .toFixed(1)
+
+        };
+    }
+
+    /* =====================================================
+       SELL
+       ===================================================== */
+
+    if(bearishEngulfing){
+
+        /*
+           RULE 3:
+           ENTRY 50% DARI BODY CANDLE KEDUA
+           / CANDLE ENGULFING
+        */
+
+        const bodySize =
+            Math.abs(
+                c2.close -
+                c2.open
+            );
+
+        const entryLevel =
+            Math.max(
+                c2.open,
+                c2.close
+            ) -
+            (
+                bodySize * 0.5
+            );
+
+        /*
+           RULE 4:
+           SL = WICK PALING TINGGI
+           ANTARA C1 DAN C2
+        */
+
+        const stopLoss =
+            Math.max(
+                c1.high,
+                c2.high
+            );
+
+        const riskDistance =
+            Math.abs(
+                stopLoss -
+                entryLevel
+            );
+
+        if(
+            !isFinite(entryLevel) ||
+            !isFinite(stopLoss) ||
+            riskDistance <= 0
+        ){
+            return null;
+        }
+
+        return {
+
+            type:'SELL',
+
+            candleTime:c2.time,
+
+            trendText:
+                '✅ MULTI-CANDLE UP VALID',
+
+            engulfText:
+                '✅ BEARISH ENGULFING CLOSE',
+
+            entry:entryLevel,
+
+            sl:stopLoss,
+
+            tp:
+                entryLevel -
+                riskDistance,
+
+            riskDistance:riskDistance,
+
+            pips:
+                (riskDistance * 10)
+                .toFixed(1)
+
+        };
+    }
+
+    return null;
+}
+
+/* =========================================================
+   SIGNAL DISPLAY
+   ========================================================= */
+
+function triggerValidSignal(res){
+
+    $('rule_trend').textContent =
+        res.trendText;
+
+    $('rule_trend').style.color =
+        "var(--green)";
+
+    $('rule_engulf').textContent =
+        res.engulfText;
+
+    $('rule_engulf').style.color =
+        "var(--green)";
+
+    $('rule_entry').textContent =
+        "✅ 50% BODY LOCKED";
+
+    $('rule_entry').style.color =
+        "var(--green)";
+
+    $('rule_sl').textContent =
+        "✅ WICK EXTREME LOCKED";
+
+    $('rule_sl').style.color =
+        "var(--green)";
+
+    $('setupStatusBadge').textContent =
+        "[4 SYARAT PATEN TERKONFIRMASI]";
+
+    $('setupStatusBadge').style.color =
+        "var(--green)";
+
+    $('trend').textContent =
+        res.type === "BUY"
+        ? "BULLISH REVERSAL VALID"
+        : "BEARISH REVERSAL VALID";
+
+    $('trend').className =
+        res.type === "BUY"
+        ? "v bull"
+        : "v sell";
+
+    let dirBox =
+        $('direction');
+
+    dirBox.textContent =
+        `SINYAL ${res.type} VALID TERKONFIRMASI`;
+
+    dirBox.className =
+        res.type === "BUY"
+        ? "bull"
+        : "sell";
+
+    $('zone').textContent =
+        res.entry.toFixed(2);
+
+    $('zone_tile').textContent =
+        res.entry.toFixed(2);
+
+    $('sl').textContent =
+        res.sl.toFixed(2);
+
+    $('tp1').textContent =
+        res.tp.toFixed(2);
+
+    $('sl_pips').textContent =
+        res.pips +
+        " Pips";
+
+    $('tp_pips').textContent =
+        res.pips +
+        " Pips";
+
+    activeSlPips =
+        parseFloat(res.pips);
+
+    calcLot();
+
+    /*
+       Signal hanya berbunyi satu kali
+       untuk candle engulfing yang sama.
+    */
+
+    if(soundUnlocked){
+
+        playAlarmSound();
+
+        sendDesktopNotification(
+            "SEBU DOLLAR AI: SINYAL PATEN!",
+            `Sinyal ${res.type} terkonfirmasi di harga ${res.entry.toFixed(2)}`
+        );
+    }
+}
+
+/* =========================================================
+   REALTIME MARKET SCANNER
+   ========================================================= */
+
+async function autonomousMarketScanner(){
+
+    if(scannerBusy){
+        return;
+    }
+
+    scannerBusy = true;
+
+    try {
+
+        const candles =
+            await getRealXAUUSDCandles();
+
+        /*
+           Data tidak cukup.
+        */
+
+        if(
+            !candles ||
+            candles.length < 6
+        ){
+            resetAiSetupDisplay();
+            return;
+        }
+
+        /*
+           Buang candle yang sedang berjalan.
+           HANYA CANDLE YANG SUDAH CLOSE
+           boleh menjadi C2 engulfing.
+        */
+
+        const closedCandles =
+            getClosedCandles(candles);
+
+        if(
+            closedCandles.length < 5
+        ){
+            resetAiSetupDisplay();
+            return;
+        }
+
+        /*
+           Ambil candle terakhir yang SUDAH CLOSE.
+        */
+
+        const latestClosed =
+            closedCandles[
+                closedCandles.length - 1
+            ];
+
+        /*
+           Jangan memproses candle yang sama
+           berulang kali.
+        */
+
+        if(
+            lastProcessedCandleTime ===
+            latestClosed.time
+        ){
+
+            /*
+               Jika signal sebelumnya sudah valid,
+               tetap pertahankan tampilan.
+            */
+
+            return;
+        }
+
+        lastProcessedCandleTime =
+            latestClosed.time;
+
+        /*
+           Evaluasi tepat 4 syarat.
+        */
+
+        const result =
+            evaluateFourRules(
+                closedCandles
+            );
+
+        if(result){
+
+            /*
+               Proteksi duplicate signal.
+            */
+
+            const signalKey =
+                result.type +
+                "_" +
+                result.candleTime;
+
+            if(
+                signalKey !==
+                lastSignalKey
+            ){
+
+                lastSignalKey =
+                    signalKey;
+
+                triggerValidSignal(
+                    result
+                );
+            }
+
+        } else {
+
+            /*
+               Tidak ada 4 syarat lengkap.
+               Signal TIDAK BOLEH muncul.
+            */
+
+            resetAiSetupDisplay();
+        }
+
+    } catch(e){
+
+        console.warn(
+            "Scanner error:",
+            e
+        );
+
+    } finally {
+
+        scannerBusy = false;
+    }
+}
+
+/* =========================================================
+   LOT CALCULATOR
+   ========================================================= */
+
+function calcLot(){
+
+    const eq =
+        parseFloat(
+            $('equity').value
+        ) || 1000;
+
+    const risk =
+        parseFloat(
+            $('riskPercent').value
+        ) || 1;
+
+    const riskUsd =
+        (
+            eq *
+            risk
+        ) / 100;
+
+    const slPips =
+        (
+            activeSlPips > 0
+        )
+        ? activeSlPips
+        : 1.0;
+
+    let lot =
+        (
+            (
+                riskUsd /
+                slPips
+            ) * 0.01
+        ).toFixed(2);
+
+    if(
+        isNaN(lot) ||
+        lot < 0.01
+    ){
+        lot = "0.01";
+    }
+
+    $('recLot').textContent =
+        lot +
+        ' Lot';
+}
+
+/* =========================================================
+   TRADINGVIEW CHART
+   ========================================================= */
+
+function updateChart(){
+
+    const tf =
+        $('tf').value;
+
+    const chartContainer =
+        $('tv_chart');
+
+    chartContainer.innerHTML = '';
+
+    new TradingView.widget({
+
+        container_id:'tv_chart',
+
+        width:'100%',
+
+        height:'450',
+
+        symbol:'OANDA:XAUUSD',
+
+        interval:tf,
+
+        timezone:'Asia/Jakarta',
+
+        theme:'dark',
+
+        style:'1',
+
+        locale:'id',
+
+        toolbar_bg:'#0b1329',
+
+        enable_publishing:false,
+
+        hide_side_toolbar:false,
+
+        allow_symbol_change:true
+
+    });
+
+    /*
+       Ketika timeframe berubah,
+       scanner harus membaca candle baru.
+    */
+
+    lastProcessedCandleTime =
+        null;
+
+    lastSignalKey =
+        null;
+
+    resetAiSetupDisplay();
+
+    setTimeout(
+        autonomousMarketScanner,
+        1500
+    );
+}
+
+/* =========================================================
+   AUDIO & NOTIFICATION
+   ========================================================= */
+
+function enableAudioAndNotifications(){
+
+    const btn =
+        $('audioToggleBtn');
+
+    try {
+
+        if(!audioCtx){
+
+            audioCtx =
+                new (
+                    window.AudioContext ||
+                    window.webkitAudioContext
+                )();
+        }
+
+        if(
+            audioCtx.state ===
+            'suspended'
+        ){
+            audioCtx.resume();
+        }
+
+        playAlarmSound();
+
+        soundUnlocked = true;
+
+    } catch(e){}
+
+    if(window.Notification){
+
+        Notification
+            .requestPermission()
+            .then(permission => {
+
+                if(
+                    permission ===
+                    'granted'
+                ){
+
+                    btn.textContent =
+                        '✅ BACKGROUND AUDIO & NOTIFIKASI AKTIF';
+
+                    btn.classList.add(
+                        'active'
+                    );
+
+                    alert(
+                        'Berhasil! Suara & notifikasi sistem aktif.'
+                    );
+
+                    sendDesktopNotification(
+                        'SEBU DOLLAR AI',
+                        'Sistem monitor struktur pasar aktif.'
+                    );
+
+                } else {
+
+                    alert(
+                        'Izin notifikasi ditolak oleh browser.'
+                    );
+                }
+
+            });
+
+    } else {
+
+        alert(
+            'Browser ini tidak mendukung Web Notification.'
+        );
+    }
+}
+
+/* =========================================================
+   START ENGINE
+   ========================================================= */
+
+window.onload = function(){
+
+    updateChart();
+
+    fetchHighImpactNews();
+
+    renderHistory();
+
+    calcLot();
+
+    /*
+       Tunggu sebentar agar halaman selesai
+       sebelum mengambil candle market.
+    */
+
+    setTimeout(
+        autonomousMarketScanner,
+        2000
+    );
+
+    /*
+       Scan setiap 15 detik.
+       Candle yang sedang berjalan selalu
+       dikeluarkan dari validasi sehingga
+       C2 harus benar-benar sudah CLOSE.
+    */
+
+    setInterval(
+        autonomousMarketScanner,
+        15000
+    );
+
+    setInterval(
+        fetchHighImpactNews,
+        300000
+    );
+};
+</script>
